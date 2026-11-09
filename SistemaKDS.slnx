@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="KDS.Datos/KDS.Datos.csproj" />
+  <Project Path="KDS.Entidades/KDS.Entidades.csproj" />
+  <Project Path="KDS.Logica/KDS.Logica.csproj" />
+  <Project Path="KDS.Presentacion/KDS.Presentacion.csproj" />
+</Solution>
