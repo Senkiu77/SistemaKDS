@@ -87,7 +87,7 @@ namespace KDS.Datos
                     }
                 }
 
-                // Cargar el detalle de platos de cada pedido activo
+                
                 foreach (Pedido p in pedidos)
                 {
                     p.Detalles = ObtenerDetallesPorPedido(p.IdPedido, con);
