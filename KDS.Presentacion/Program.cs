@@ -10,8 +10,6 @@ namespace KDS.Presentacion
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            // Aquí le dices con cuál formulario arrancar (puedes cambiarlo luego)
             Application.Run(new FrmMeseroPOS());
         }
     }

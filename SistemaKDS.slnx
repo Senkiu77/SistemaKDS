@@ -1,6 +1,6 @@
 <Solution>
-  <Project Path="KDS.Datos/KDS.Datos.csproj" />
-  <Project Path="KDS.Entidades/KDS.Entidades.csproj" />
-  <Project Path="KDS.Logica/KDS.Logica.csproj" />
-  <Project Path="KDS.Presentacion/KDS.Presentacion.csproj" />
+  <Project Path="KDS.Datos/KDS.Datos.csproj" Id="6f5aca2f-41a0-4adf-be99-27de2c82267c" />
+  <Project Path="KDS.Entidades/KDS.Entidades.csproj" Id="ec05964b-f895-4a9c-bf66-c17128997c33" />
+  <Project Path="KDS.Logica/KDS.Logica.csproj" Id="a44745dd-4e81-4d9f-8c65-298c3934b194" />
+  <Project Path="KDS.Presentacion/KDS.Presentacion.csproj" Id="711d42fa-1c68-4290-8e6f-87a54150d509" />
 </Solution>

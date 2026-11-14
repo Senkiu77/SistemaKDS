@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace KDS.Entidades
 {
-    internal class DetallePedido
+    public class DetallePedido
     {
+        public int IdDetalle { get; set; }
+        public int IdPedido { get; set; }
+        public int IdPlato { get; set; }
+        public string NombrePlato { get; set; }
+        public int Cantidad { get; set; }
+        public string NotasEspeciales { get; set; }
     }
 }
