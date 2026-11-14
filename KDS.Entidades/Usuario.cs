@@ -10,6 +10,6 @@ namespace KDS.Entidades
     {
         public int IdUsuario { get; set; }
         public string Nombre { get; set; }
-        public string Rol { get; set; } // "Mesero", "Cocinero" o "Admin"
+        public string Rol { get; set; }
     }
 }
