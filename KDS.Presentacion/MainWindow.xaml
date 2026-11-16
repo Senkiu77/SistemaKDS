@@ -1,0 +1,402 @@
+﻿<Window x:Class="KDS.PRE.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sistema KDS"
+        Height="750"
+        Width="1200"
+        MinHeight="600"
+        MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Background="#080808">
+
+
+    <Window.Resources>
+
+        <Style x:Key="BotonMesero" TargetType="Button">
+
+            <Setter Property="Background" Value="#F0F0F0"/>
+            <Setter Property="Foreground" Value="#111111"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="12"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="Borde"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+
+                            <ContentPresenter
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Borde"
+                                    Property="Background"
+                                    Value="#D6D6D6"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Borde"
+                                    Property="Background"
+                                    Value="#AAAAAA"/>
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Borde"
+                                    Property="Opacity"
+                                    Value="0.4"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+        <Style x:Key="BotonCocina" TargetType="Button">
+
+            <Setter Property="Background" Value="#202020"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="12"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="Borde"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
+                            Padding="{TemplateBinding Padding}">
+
+                            <ContentPresenter
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Borde"
+                                    Property="Background"
+                                    Value="#353535"/>
+                                <Setter TargetName="Borde"
+                                    Property="BorderBrush"
+                                    Value="#AAAAAA"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Borde"
+                                    Property="Background"
+                                    Value="#111111"/>
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Borde"
+                                    Property="Opacity"
+                                    Value="0.4"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+    </Window.Resources>
+
+
+    <Grid Background="#080808">
+
+        <Canvas x:Name="AreaAnimacion"
+            ClipToBounds="True"
+            Background="Transparent">
+
+            <Rectangle x:Name="LogoKDS"
+                   Width="300"
+                   Height="200"
+                   Fill="White">
+
+                <Rectangle.OpacityMask>
+                    <ImageBrush
+                    ImageSource="/Assets/logo-kdss.png"
+                    Stretch="Uniform"/>
+                </Rectangle.OpacityMask>
+
+            </Rectangle>
+
+        </Canvas>
+
+        <Grid>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="35,25,35,0">
+
+                <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center">
+
+
+                    <StackPanel Orientation="Horizontal"
+            VerticalAlignment="Center">
+
+                        <Border Background="#F5A623"
+            CornerRadius="6"
+            Padding="9,5"
+            Margin="0,0,12,0">
+
+                            <TextBlock Text="KDS"
+                   Foreground="#080808"
+                   FontSize="23"
+                   FontWeight="ExtraBold"/>
+                        </Border>
+
+                        <StackPanel VerticalAlignment="Center">
+
+                            <TextBlock Text="GESTIÓN INTELIGENTE"
+                   Foreground="White"
+                   FontSize="12"
+                   FontWeight="Bold"/>
+
+                            <TextBlock Text="SISTEMA DE COMANDAS"
+                   Foreground="#888888"
+                   FontSize="9"
+                   Margin="0,3,0,0"/>
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+
+                </StackPanel>
+
+
+                <StackPanel Orientation="Horizontal"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center">
+
+                    <Ellipse Width="8"
+             Height="8"
+             Fill="#39D98A"
+             Margin="0,0,9,0"/>
+
+                    <TextBlock Text="INTERFAZ ACTIVA"
+               Foreground="#39D98A"
+               FontSize="10"
+               FontWeight="SemiBold"
+               VerticalAlignment="Center"/>
+
+                </StackPanel>
+
+
+            </Grid>
+
+            <Border x:Name="PantallaInicio"
+                Grid.Row="1"
+                Width="680"
+                Padding="45"
+                CornerRadius="12"
+                Background="#D90D0D0D"
+                BorderBrush="#35FFFFFF"
+                BorderThickness="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+
+                <StackPanel>
+
+                    <TextBlock Text="BIENVENIDO"
+                           Foreground="#AAAAAA"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Tu cocina,&#10;en sincronía."
+                           Foreground="White"
+                           FontSize="43"
+                           FontWeight="Bold"
+                           LineHeight="52"
+                           Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Selecciona el espacio de trabajo."
+                           Foreground="#AAAAAA"
+                           FontSize="14"
+                           Margin="0,0,0,35"/>
+
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+
+                       
+<Button x:Name="BtnMesero"
+        Grid.Column="0"
+        Height="115"
+        Style="{StaticResource BotonMesero}"
+        Click="BtnMesero_Click">
+
+    <StackPanel Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Margin="8">
+
+        <Border Width="52"
+                Height="52"
+                CornerRadius="12"
+                Background="#202020"
+                VerticalAlignment="Center">
+
+            <TextBlock Text="01"
+                       Foreground="White"
+                       FontSize="19"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <StackPanel Margin="16,0,0,0"
+                    VerticalAlignment="Center">
+
+            <TextBlock Text="MESERO"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Foreground="#111111"/>
+
+            <TextBlock Text="Toma de comandas"
+                       FontSize="12"
+                       Foreground="#555555"
+                       Margin="0,5,0,0"/>
+
+            <TextBlock Text="ABRIR MÓDULO →"
+                       FontSize="9"
+                       FontWeight="Bold"
+                       Foreground="#777777"
+                       Margin="0,8,0,0"/>
+        </StackPanel>
+    </StackPanel>
+</Button>
+
+            <Button x:Name="BtnCocina"
+        Grid.Column="2"
+        Height="115"
+        Style="{StaticResource BotonCocina}"
+        Click="BtnCocina_Click">
+
+             <StackPanel Orientation="Horizontal"
+                VerticalAlignment="Center"
+                Margin="8">
+
+        <Border Width="52"
+                Height="52"
+                CornerRadius="12"
+                Background="#383838"
+                VerticalAlignment="Center">
+
+            <TextBlock Text="02"
+                       Foreground="White"
+                       FontSize="19"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <StackPanel Margin="16,0,0,0"
+                    VerticalAlignment="Center">
+
+            <TextBlock Text="COCINA"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Foreground="White"/>
+
+            <TextBlock Text="Monitor de pedidos"
+                       FontSize="12"
+                       Foreground="#AAAAAA"
+                       Margin="0,5,0,0"/>
+
+            <TextBlock Text="ABRIR MÓDULO →"
+                       FontSize="9"
+                       FontWeight="Bold"
+                       Foreground="#888888"
+                       Margin="0,8,0,0"/>
+        </StackPanel>
+    </StackPanel>
+</Button>
+
+
+                    </Grid>
+
+                </StackPanel>
+
+            </Border>
+
+            <ContentControl x:Name="ContenidoPrincipal"
+                Grid.Row="1"
+                Visibility="Collapsed"/>
+
+            <Grid Grid.Row="2" Margin="35,0,35,18">
+
+                <Border Height="1"
+            Background="#292929"
+            VerticalAlignment="Top"/>
+
+                <Grid Margin="0,15,0,0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center">
+
+                        <TextBlock Text="KDS"
+                       Foreground="#F5A623"
+                       FontSize="11"
+                       FontWeight="Bold"/>
+
+                        <TextBlock Text="  |  SISTEMA DE GESTIÓN DE COMANDAS"
+                       Foreground="#777777"
+                       FontSize="10"
+                       VerticalAlignment="Center"/>
+
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="1"
+                   Text="PANEL PRINCIPAL"
+                   Foreground="#777777"
+                   FontSize="10"
+                   VerticalAlignment="Center"/>
+
+                </Grid>
+
+            </Grid>
+
+
+        </Grid>
+
+    </Grid>
+
+</Window>

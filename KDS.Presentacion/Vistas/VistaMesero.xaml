@@ -1,0 +1,679 @@
+﻿<UserControl x:Class="KDS.PRE.Vistas.VistaMesero"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+
+    <UserControl.Resources>
+
+        <Style x:Key="TarjetaProducto" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#222222"/>
+            <Setter Property="BorderBrush" Value="#383838"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border x:Name="BordeTarjeta"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10" Padding="12">
+                            <ContentPresenter
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BordeTarjeta" Property="BorderBrush" Value="#F5A623"/>
+                                <Setter TargetName="BordeTarjeta" Property="Background" Value="#2C261D"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="BordeTarjeta" Property="BorderBrush" Value="#F5A623"/>
+                                <Setter TargetName="BordeTarjeta" Property="Background" Value="#3A2B16"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BordeTarjeta" Property="Background" Value="#493419"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="BordeTarjeta" Property="BorderBrush" Value="#F5A623"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CategoriaMenu" TargetType="{x:Type RadioButton}">
+            <Setter Property="Foreground" Value="#BBBBBB"/>
+            <Setter Property="Background" Value="#222222"/>
+            <Setter Property="BorderBrush" Value="#383838"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,8,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Border x:Name="BordeCategoria"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1" CornerRadius="7" Padding="12,9">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BordeCategoria" Property="BorderBrush" Value="#F5A623"/>
+                                <Setter TargetName="BordeCategoria" Property="Background" Value="#30271B"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="BordeCategoria" Property="Background" Value="#F5A623"/>
+                                <Setter TargetName="BordeCategoria" Property="BorderBrush" Value="#F5A623"/>
+                                <Setter Property="Foreground" Value="#111111"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="BordeCategoria" Property="BorderBrush" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BotonOscuro" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#292929"/>
+            <Setter Property="BorderBrush" Value="#444444"/>
+            <Setter Property="Foreground" Value="#CCCCCC"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="BordeBoton"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1" CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BordeBoton" Property="Background" Value="#352B1D"/>
+                                <Setter TargetName="BordeBoton" Property="BorderBrush" Value="#F5A623"/>
+                                <Setter Property="Foreground" Value="#F5A623"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BordeBoton" Property="Background" Value="#493419"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="BordeBoton" Property="BorderBrush" Value="#F5A623"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BotonNaranja" TargetType="{x:Type Button}">
+            <Setter Property="Foreground" Value="#111111"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="BordeBoton" Background="#F5A623"
+                                BorderBrush="#F5A623" BorderThickness="1" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BordeBoton" Property="Background" Value="#FFB940"/>
+                                <Setter TargetName="BordeBoton" Property="BorderBrush" Value="#FFB940"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BordeBoton" Property="Background" Value="#D98A10"/>
+                                <Setter TargetName="BordeBoton" Property="BorderBrush" Value="#D98A10"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="BordeBoton" Property="BorderBrush" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CampoTexto" TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="#242424"/>
+            <Setter Property="BorderBrush" Value="#383838"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="#F5A623"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Margin="25">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,22">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock Text="PUNTO DE VENTA / MESERO" Foreground="#AAAAAA"
+                           FontSize="11" FontWeight="Bold"/>
+                <TextBlock Text="Nueva comanda" Foreground="White" FontSize="30"
+                           FontWeight="SemiBold" Margin="0,7,0,0"/>
+                <TextBlock Text="Selecciona los productos para registrar el pedido."
+                           Foreground="#888888" FontSize="13" TextWrapping="Wrap"
+                           Margin="0,5,0,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="18,0,0,0">
+                <Button Content="ABRIR COCINA ↗" Click="BtnAbrirCocina_Click"
+                        Style="{StaticResource BotonOscuro}" Foreground="#F5A623"
+                        Height="38" Padding="12,0" FontSize="11" Margin="0,0,0,8"/>
+                <Button Content="← INICIO" Click="BtnInicio_Click"
+                        Style="{StaticResource BotonOscuro}" Height="32" FontSize="11"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="18"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="#FF101010" BorderBrush="#333333"
+                    BorderThickness="1" CornerRadius="12" Padding="22">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="MENÚ DE PRODUCTOS" Foreground="White"
+                                       FontSize="18" FontWeight="Bold" TextWrapping="Wrap"/>
+                            <TextBlock Text="Explora nuestro menú y selecciona tus favoritos."
+                                       Foreground="#999999" FontSize="12"
+                                       TextWrapping="Wrap" Margin="0,6,12,0"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="#30271B" CornerRadius="6"
+                                Padding="10,7" VerticalAlignment="Top">
+                            <TextBlock x:Name="TextoCantidadMenu" Text="4 PRODUCTOS"
+                                       Foreground="#F5A623" FontSize="10" FontWeight="Bold"/>
+                        </Border>
+                    </Grid>
+
+                    <Border Grid.Row="1" Style="{StaticResource CampoTexto}"
+                            Background="#1C1C1C" Padding="12,10" Margin="0,0,0,14">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="⌕" Foreground="#F5A623" FontSize="22"
+                                       VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <Grid Grid.Column="1">
+                                <TextBox x:Name="BusquedaProductos"
+                                         TextChanged="BusquedaProductos_TextChanged"
+                                         Background="Transparent" Foreground="White"
+                                         CaretBrush="#F5A623" BorderThickness="0"
+                                         FontSize="13" VerticalContentAlignment="Center"
+                                         Padding="0" ToolTip="Buscar productos"/>
+                                <TextBlock Text="Buscar productos..." Foreground="#888888"
+                                           FontSize="13" VerticalAlignment="Center"
+                                           IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=BusquedaProductos}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <WrapPanel Grid.Row="2" Margin="0,0,0,4">
+                        <RadioButton x:Name="CategoriaHamburguesas" Content="Hamburguesas"
+                                     GroupName="CategoriasProductos" IsChecked="True"
+                                     Checked="Categoria_Checked" Style="{StaticResource CategoriaMenu}"/>
+                        <RadioButton x:Name="CategoriaAcompanamientos" Content="Acompañamientos"
+                                     GroupName="CategoriasProductos"
+                                     Checked="Categoria_Checked" Style="{StaticResource CategoriaMenu}"/>
+                        <RadioButton x:Name="CategoriaBebidas" Content="Bebidas"
+                                     GroupName="CategoriasProductos"
+                                     Checked="Categoria_Checked" Style="{StaticResource CategoriaMenu}"/>
+                        <RadioButton x:Name="CategoriaAdicionales" Content="Adicionales"
+                                     GroupName="CategoriasProductos"
+                                     Checked="Categoria_Checked" Style="{StaticResource CategoriaMenu}"/>
+                    </WrapPanel>
+
+                    <TextBlock x:Name="MensajeSinResultados" Grid.Row="3"
+                               Text="No encontramos productos.&#10;Prueba otra búsqueda o categoría."
+                               Foreground="#999999" FontSize="13" TextAlignment="Center"
+                               TextWrapping="Wrap" HorizontalAlignment="Center"
+                               VerticalAlignment="Center" Margin="20"
+                               Visibility="Collapsed" IsHitTestVisible="False"/>
+
+                    <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled" Margin="4,18,4,0">
+                        <ScrollViewer.Resources>
+                            <Style TargetType="{x:Type ScrollBar}">
+                                <Setter Property="Width" Value="9"/>
+                                <Setter Property="Background" Value="#171717"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                            <Grid Background="#171717">
+                                                <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                                    <Track.Thumb>
+                                                        <Thumb>
+                                                            <Thumb.Template>
+                                                                <ControlTemplate TargetType="{x:Type Thumb}">
+                                                                    <Border Background="#555555"
+                                                                            CornerRadius="5" Margin="1"/>
+                                                                </ControlTemplate>
+                                                            </Thumb.Template>
+                                                        </Thumb>
+                                                    </Track.Thumb>
+                                                </Track>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ScrollViewer.Resources>
+
+                        <UniformGrid Columns="2" VerticalAlignment="Top">
+
+                            <ToggleButton x:Name="TarjetaClasica" Tag="clasica"
+                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
+                                <StackPanel>
+                                    <Border Height="80" Background="#30271B" CornerRadius="8">
+                                        <TextBlock Text="🍔" FontSize="48"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="PLÁTANO CLÁSICA" Foreground="White" FontSize="13"
+                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
+                                    <TextBlock Text="Hamburguesa de plátano" Foreground="#999999"
+                                               FontSize="10" TextWrapping="Wrap"/>
+                                    <TextBlock Text="$ 15.000" Foreground="#F5A623" FontSize="17"
+                                               FontWeight="Bold" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <ToggleButton x:Name="TarjetaDoble" Tag="doble"
+                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
+                                <StackPanel>
+                                    <Border Height="80" Background="#30271B" CornerRadius="8">
+                                        <TextBlock Text="🍔" FontSize="48"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="DOBLE PLÁTANO" Foreground="White" FontSize="13"
+                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
+                                    <TextBlock Text="Doble porción de sabor" Foreground="#999999"
+                                               FontSize="10" TextWrapping="Wrap"/>
+                                    <TextBlock Text="$ 20.000" Foreground="#F5A623" FontSize="17"
+                                               FontWeight="Bold" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <ToggleButton x:Name="TarjetaCombo" Tag="combo"
+                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
+                                <StackPanel>
+                                    <Border Height="80" Background="#30271B" CornerRadius="8">
+                                        <TextBlock Text="🍟" FontSize="48"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="COMBO BURGER" Foreground="White" FontSize="13"
+                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
+                                    <TextBlock Text="Hamburguesa y acompañamiento" Foreground="#999999"
+                                               FontSize="10" TextWrapping="Wrap"/>
+                                    <TextBlock Text="$ 24.000" Foreground="#F5A623" FontSize="17"
+                                               FontWeight="Bold" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <ToggleButton x:Name="TarjetaEspecial" Tag="especial"
+                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
+                                <StackPanel>
+                                    <Border Height="80" Background="#30271B" CornerRadius="8">
+                                        <TextBlock Text="🍔" FontSize="48"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="BURGER ESPECIAL" Foreground="White" FontSize="13"
+                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
+                                    <TextBlock Text="Una combinación especial" Foreground="#999999"
+                                               FontSize="10" TextWrapping="Wrap"/>
+                                    <TextBlock Text="$ 22.000" Foreground="#F5A623" FontSize="17"
+                                               FontWeight="Bold" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <ToggleButton x:Name="TarjetaPapas" Tag="papas"
+                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
+                                <StackPanel>
+                                    <Border Height="80" Background="#30271B" CornerRadius="8">
+                                        <TextBlock Text="🍟" FontSize="48"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="PAPAS FRITAS" Foreground="White" FontSize="13"
+                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
+                                    <TextBlock Text="Porción de papas crujientes" Foreground="#999999"
+                                               FontSize="10" TextWrapping="Wrap"/>
+                                    <TextBlock Text="$ 6.000" Foreground="#F5A623" FontSize="17"
+                                               FontWeight="Bold" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <ToggleButton x:Name="TarjetaGaseosa" Tag="gaseosa"
+                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
+                                <StackPanel>
+                                    <Border Height="80" Background="#30271B" CornerRadius="8">
+                                        <TextBlock Text="🥤" FontSize="48"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="GASEOSA PERSONAL" Foreground="White" FontSize="13"
+                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
+                                    <TextBlock Text="Bebida personal de 400 ml" Foreground="#999999"
+                                               FontSize="10" TextWrapping="Wrap"/>
+                                    <TextBlock Text="$ 4.000" Foreground="#F5A623" FontSize="17"
+                                               FontWeight="Bold" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </ToggleButton>
+
+                            <ToggleButton x:Name="TarjetaQueso" Tag="queso"
+                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
+                                <StackPanel>
+                                    <Border Height="80" Background="#30271B" CornerRadius="8">
+                                        <TextBlock Text="🧀" FontSize="48"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="QUESO EXTRA" Foreground="White" FontSize="13"
+                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
+                                    <TextBlock Text="Porción adicional de queso" Foreground="#999999"
+                                               FontSize="10" TextWrapping="Wrap"/>
+                                    <TextBlock Text="$ 3.000" Foreground="#F5A623" FontSize="17"
+                                               FontWeight="Bold" Margin="0,12,0,0"/>
+                                </StackPanel>
+                            </ToggleButton>
+
+                        </UniformGrid>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2" Background="#FF101010" BorderBrush="#333333"
+                    BorderThickness="1" CornerRadius="10" Padding="20">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <Grid MinHeight="460">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,15">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,8,0">
+                                    <TextBlock Text="COMANDA" Foreground="White"
+                                               FontSize="17" FontWeight="Bold"/>
+                                    <TextBlock Text="Resumen del pedido" Foreground="#888888"
+                                               FontSize="11" Margin="0,5,0,0"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="#30271B" CornerRadius="6"
+                                        Padding="10,7" VerticalAlignment="Center">
+                                    <TextBlock x:Name="TextoNumeroPedido" Text="PEDIDO #001"
+                                               Foreground="#F5A623" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                            </Grid>
+
+                            <StackPanel Grid.Row="1" Margin="0,16,0,0">
+                                <TextBlock Text="MESERO" Foreground="#888888" FontSize="10"/>
+                                <Border Background="#242424" CornerRadius="6"
+                                        Padding="10" Margin="0,6,0,0">
+                                    <ComboBox x:Name="SelectorMesero" SelectedIndex="0"
+                                              SelectionChanged="SelectorMesero_SelectionChanged"
+                                              MinHeight="28" FontSize="12" Foreground="Black"
+                                              ToolTip="Mesero responsable del pedido">
+                                        <ComboBoxItem Content="Carlos Mesero"/>
+                                        <ComboBoxItem Content="Laura Mesera"/>
+                                    </ComboBox>
+                                </Border>
+                            </StackPanel>
+
+                            <Grid Grid.Row="2" Margin="0,18,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="MESA" Foreground="#888888" FontSize="10"/>
+                                    <Border Background="#242424" CornerRadius="6"
+                                            Padding="10" Margin="0,6,5,0">
+                                        <ComboBox x:Name="SelectorMesa" SelectedIndex="0"
+                                                  FontSize="12" FontWeight="SemiBold"
+                                                  Foreground="Black" MinHeight="28"
+                                                  ToolTip="Selecciona la mesa del pedido">
+                                            <ComboBoxItem Content="Mesa 01"/>
+                                            <ComboBoxItem Content="Mesa 02"/>
+                                            <ComboBoxItem Content="Mesa 03"/>
+                                            <ComboBoxItem Content="Mesa 04"/>
+                                            <ComboBoxItem Content="Mesa 05"/>
+                                            <ComboBoxItem Content="Mesa 06"/>
+                                            <ComboBoxItem Content="Mesa 07"/>
+                                            <ComboBoxItem Content="Mesa 08"/>
+                                            <ComboBoxItem Content="Mesa 09"/>
+                                            <ComboBoxItem Content="Mesa 10"/>
+                                        </ComboBox>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="ESTADO" Foreground="#888888" FontSize="10"/>
+                                    <Border Background="#183C2A" CornerRadius="6"
+                                            Padding="10" Margin="5,6,0,0">
+                                        <TextBlock Text="● En creación" Foreground="#39D98A"
+                                                   FontSize="12" TextWrapping="Wrap"/>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <StackPanel x:Name="MensajeComandaVacia"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" Margin="12">
+                                <Border Width="60" Height="60" Background="#30271B"
+                                        CornerRadius="16" HorizontalAlignment="Center">
+                                    <TextBlock Text="+" Foreground="#F5A623" FontSize="34"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="Tu comanda está vacía" Foreground="#DDDDDD"
+                                           FontSize="15" FontWeight="SemiBold" TextAlignment="Center"
+                                           TextWrapping="Wrap" Margin="0,14,0,0"/>
+                                <TextBlock Text="Todavía no hay productos&#10;en esta comanda."
+                                           Foreground="#888888" FontSize="12" TextAlignment="Center"
+                                           TextWrapping="Wrap" Margin="0,7,0,0"/>
+                            </StackPanel>
+
+                            <ItemsControl x:Name="ListaComanda" VerticalAlignment="Top">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#222222" BorderBrush="#383838"
+                                                BorderThickness="1" CornerRadius="8"
+                                                Padding="10" Margin="0,0,0,10">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Nombre}" Foreground="White"
+                                                           FontSize="12" FontWeight="SemiBold"
+                                                           TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding PrecioUnitarioTexto}"
+                                                           Foreground="#999999" FontSize="11"
+                                                           Margin="0,5,0,0"/>
+                                                <WrapPanel Margin="0,10,0,0" VerticalAlignment="Center">
+                                                    <Button Content="−" Tag="{Binding}"
+                                                            Click="RestarProducto_Click"
+                                                            Style="{StaticResource BotonOscuro}"
+                                                            Width="30" Height="30"
+                                                            ToolTip="Quitar una unidad"/>
+                                                    <TextBlock Text="{Binding Cantidad}"
+                                                               Foreground="White" FontSize="13"
+                                                               MinWidth="30" TextAlignment="Center"
+                                                               VerticalAlignment="Center"/>
+                                                    <Button Content="+" Tag="{Binding}"
+                                                            Click="SumarProducto_Click"
+                                                            Style="{StaticResource BotonOscuro}"
+                                                            Width="30" Height="30"
+                                                            ToolTip="Agregar una unidad"/>
+                                                    <TextBlock Text="{Binding SubtotalTexto}"
+                                                               Foreground="#F5A623" FontSize="13"
+                                                               FontWeight="Bold" VerticalAlignment="Center"
+                                                               Margin="12,5,0,5"/>
+                                                </WrapPanel>
+                                                <StackPanel Margin="0,8,0,0">
+                                                    <TextBlock Text="NOTA DEL PRODUCTO"
+                                                               Foreground="#999999" FontSize="10"
+                                                               Margin="0,0,0,5"/>
+                                                    <Border Style="{StaticResource CampoTexto}" Padding="8">
+                                                        <TextBox Text="{Binding Notas, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                 MaxLength="255" Background="Transparent"
+                                                                 Foreground="White" CaretBrush="#F5A623"
+                                                                 BorderThickness="0" FontSize="11"
+                                                                 TextWrapping="Wrap" MinHeight="25"
+                                                                 ToolTip="Ejemplo: sin cebolla. Aplica a todas las unidades de esta línea."/>
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+
+                        <StackPanel Grid.Row="2">
+                            <TextBlock Text="OBSERVACIONES DEL PEDIDO" Foreground="#999999"
+                                       FontSize="10" FontWeight="SemiBold" Margin="0,12,0,8"/>
+                            <Border Style="{StaticResource CampoTexto}" Padding="10" Margin="0,0,0,8">
+                                <TextBox x:Name="ObservacionesPedido" MinHeight="55" MaxHeight="100"
+                                         Background="Transparent" Foreground="White" CaretBrush="#F5A623"
+                                         BorderThickness="0" FontSize="12" TextWrapping="Wrap"
+                                         AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                         ToolTip="Escribe indicaciones generales para cocina"/>
+                            </Border>
+                            <Separator Background="#444444" Margin="0,10,0,18"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="TOTAL DEL PEDIDO" Foreground="#999999"
+                                               FontSize="10" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="TextoTotal" Text="$ 0" Foreground="#F5A623"
+                                               FontSize="30" FontWeight="Bold"
+                                               TextWrapping="Wrap" Margin="0,5,0,0"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="#242424" CornerRadius="7"
+                                        Padding="12,8" VerticalAlignment="Center">
+                                    <TextBlock x:Name="TextoCantidad" Text="0 PRODUCTOS"
+                                               Foreground="#AAAAAA" FontSize="10" FontWeight="Bold"/>
+                                </Border>
+                            </Grid>
+
+                            <Button Content="VER TICKET" Click="BtnVerTicket_Click"
+                                    Style="{StaticResource BotonOscuro}" Background="#30271B"
+                                    BorderBrush="#F5A623" Foreground="#F5A623"
+                                    Height="40" Margin="0,16,0,0" FontSize="12"/>
+                            <Button Content="LIMPIAR COMANDA" Click="BtnLimpiarComanda_Click"
+                                    Style="{StaticResource BotonOscuro}"
+                                    Height="40" Margin="0,18,0,9"/>
+                            <Button Content="ENVIAR A COCINA  →" Click="BtnEnviarCocina_Click"
+                                    Style="{StaticResource BotonNaranja}" Height="50" FontSize="13"/>
+
+                            <Border Background="#14241B" BorderBrush="#285C40" BorderThickness="1"
+                                    CornerRadius="8" Padding="12" Margin="0,20,0,0">
+                                <StackPanel>
+                                    <TextBlock x:Name="TextoListosMesero" Text="LISTOS PARA RECOGER: 0"
+                                               Foreground="#39D98A" FontSize="12"
+                                               FontWeight="Bold" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Pedidos del mesero seleccionado"
+                                               Foreground="#999999" FontSize="10"
+                                               TextWrapping="Wrap" Margin="0,5,0,10"/>
+                                    <TextBlock x:Name="MensajeSinListos"
+                                               Text="Todavía no hay pedidos listos."
+                                               Foreground="#AAAAAA" FontSize="11" TextWrapping="Wrap"/>
+                                    <ItemsControl x:Name="ListaPedidosListos">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#1C1C1C" CornerRadius="6"
+                                                        Padding="10" Margin="0,0,0,8">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Resumen, Mode=OneWay}"
+                                                                   Foreground="White" FontSize="13"
+                                                                   FontWeight="Bold" TextWrapping="Wrap"/>
+                                                        <TextBlock Text="{Binding DetalleEntrega, Mode=OneWay}"
+                                                                   Foreground="#AAAAAA" FontSize="11"
+                                                                   TextWrapping="Wrap" Margin="0,5,0,0"/>
+                                                        <Button Content="VER TICKET" Tag="{Binding}"
+                                                                Click="BtnTicketListo_Click"
+                                                                Style="{StaticResource BotonOscuro}"
+                                                                Height="32" FontSize="10" Margin="0,10,0,6"/>
+                                                        <Button Content="MARCAR COMO ENTREGADO" Tag="{Binding}"
+                                                                Click="BtnEntregar_Click"
+                                                                Style="{StaticResource BotonNaranja}"
+                                                                Height="38" FontSize="10"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

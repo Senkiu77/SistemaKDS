@@ -1,0 +1,276 @@
+﻿<UserControl x:Class="KDS.PRE.Vistas.VistaCocina"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+
+    <UserControl.Resources>
+        <Style x:Key="BotonInicio" TargetType="{x:Type Button}">
+            <Setter Property="Foreground" Value="#CCCCCC"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="BordeBoton" Background="#FF222222"
+                                BorderBrush="#444444" BorderThickness="1"
+                                CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BordeBoton" Property="Background" Value="#352B1D"/>
+                                <Setter TargetName="BordeBoton" Property="BorderBrush" Value="#F5A623"/>
+                                <Setter Property="Foreground" Value="#F5A623"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BordeBoton" Property="Background" Value="#493419"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="BordeBoton" Property="BorderBrush" Value="#F5A623"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="BotonEstado" TargetType="{x:Type Button}">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Margin" Value="0,18,0,0"/>
+            <Setter Property="Foreground" Value="#111111"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="BordeBoton"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding Background}"
+                                BorderThickness="1" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BordeBoton" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BordeBoton" Property="Opacity" Value="0.65"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="BordeBoton" Property="BorderBrush" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="25">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,22">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="MONITOR DE PEDIDOS / COCINA" Foreground="#AAAAAA"
+                           FontSize="11" FontWeight="Bold"/>
+                <TextBlock Text="Comandas en cocina" Foreground="White"
+                           FontSize="30" FontWeight="SemiBold"
+                           TextWrapping="Wrap" Margin="0,7,0,0"/>
+                <TextBlock Text="Los pedidos listos pasan al mesero para su entrega."
+                           Foreground="#888888" FontSize="13"
+                           TextWrapping="Wrap" Margin="0,5,0,0"/>
+                <WrapPanel Margin="0,16,0,0">
+                    <Border Background="#FF30271B" BorderBrush="#F5A623"
+                            BorderThickness="1" CornerRadius="7"
+                            Padding="12,8" Margin="0,0,10,8">
+                        <TextBlock x:Name="TextoPendientes" Text="● PENDIENTES: 0"
+                                   Foreground="#F5A623" FontSize="11" FontWeight="SemiBold"/>
+                    </Border>
+                    <Border Background="#FF192C40" BorderBrush="#4DA3FF"
+                            BorderThickness="1" CornerRadius="7"
+                            Padding="12,8" Margin="0,0,10,8">
+                        <TextBlock x:Name="TextoPreparacion" Text="● EN PREPARACIÓN: 0"
+                                   Foreground="#4DA3FF" FontSize="11" FontWeight="SemiBold"/>
+                    </Border>
+                    <Border Background="#FF183C2A" BorderBrush="#39D98A"
+                            BorderThickness="1" CornerRadius="7"
+                            Padding="12,8" Margin="0,0,0,8">
+                        <TextBlock x:Name="TextoListos" Text="● LISTOS: 0"
+                                   Foreground="#39D98A" FontSize="11" FontWeight="SemiBold"
+                                   ToolTip="Pedidos listos para recoger en Mesero."/>
+                    </Border>
+                </WrapPanel>
+                <TextBlock Text="TIEMPO: verde &lt; 5 min · naranja 5–9 min · rojo ≥ 10 min"
+                           Foreground="#999999" FontSize="11"
+                           TextWrapping="Wrap" Margin="0,0,0,8"/>
+            </StackPanel>
+
+            <Button Grid.Column="1" Content="CERRAR MONITOR"
+                    Click="BtnInicio_Click" Style="{StaticResource BotonInicio}"
+                    Height="38" Margin="18,0,0,0"
+                    Padding="16,0" VerticalAlignment="Center"/>
+        </Grid>
+
+        <Border Grid.Row="1" Background="#FF101010" BorderBrush="#333333"
+                BorderThickness="1" CornerRadius="12" Padding="22">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="PEDIDOS ACTIVOS" Foreground="White"
+                               FontSize="18" FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+                    <Border Grid.Column="1" Background="#30271B"
+                            CornerRadius="6" Padding="12,8">
+                        <TextBlock x:Name="TextoTotalPedidos" Text="0 PEDIDOS"
+                                   Foreground="#F5A623" FontSize="11" FontWeight="Bold"/>
+                    </Border>
+                </Grid>
+
+                <StackPanel x:Name="MensajeSinPedidos" Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" Margin="12">
+                    <Border Width="72" Height="72" Background="#30271B"
+                            CornerRadius="18" HorizontalAlignment="Center">
+                        <TextBlock Text="✓" Foreground="#F5A623" FontSize="36"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="Todo al día" Foreground="White"
+                               FontSize="22" FontWeight="SemiBold"
+                               TextAlignment="Center" Margin="0,18,0,0"/>
+                    <TextBlock Text="No hay comandas pendientes." Foreground="#999999"
+                               FontSize="13" TextAlignment="Center" Margin="0,8,0,0"/>
+                </StackPanel>
+
+                <ScrollViewer x:Name="ScrollPedidos" Grid.Row="1"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl x:Name="ListaPedidos">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="290" Margin="0,0,16,16"
+                                        Background="#1C1C1C"
+                                        BorderBrush="{Binding ColorPrincipal, Mode=OneWay}"
+                                        BorderThickness="1" CornerRadius="10">
+                                    <StackPanel>
+                                        <Border Background="{Binding ColorFondo, Mode=OneWay}"
+                                                CornerRadius="9,9,0,0" Padding="16">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding NumeroTexto, Mode=OneWay}"
+                                                           Foreground="{Binding ColorPrincipal, Mode=OneWay}"
+                                                           FontSize="15" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding Mesa, Mode=OneWay}"
+                                                           Foreground="White" FontSize="12" Margin="0,5,0,0"/>
+                                                <TextBlock Text="{Binding Fecha, Mode=OneWay, StringFormat='Recibido: {0:dd/MM/yyyy HH:mm}'}"
+                                                           Foreground="#BBBBBB" FontSize="11" Margin="0,8,0,0"/>
+                                                <TextBlock Text="{Binding Mesero, Mode=OneWay}"
+                                                           Foreground="#DDDDDD" FontSize="11"
+                                                           TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                <TextBlock Text="{Binding TiempoTexto, Mode=OneWay}"
+                                                           Foreground="{Binding ColorPrincipal, Mode=OneWay}"
+                                                           FontSize="12" FontWeight="Bold"
+                                                           TextWrapping="Wrap" Margin="0,8,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <StackPanel Margin="16">
+                                            <TextBlock Text="PRODUCTOS" Foreground="#888888"
+                                                       FontSize="10" FontWeight="Bold" Margin="0,0,0,14"/>
+                                            <ItemsControl ItemsSource="{Binding Productos}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Margin="0,0,0,12">
+                                                            <TextBlock Foreground="White" FontSize="13"
+                                                                       FontWeight="SemiBold"
+                                                                       TextWrapping="Wrap" Margin="0,0,0,4">
+                                                                <Run Text="{Binding Cantidad, Mode=OneWay}"/>
+                                                                <Run Text=" × "/>
+                                                                <Run Text="{Binding Nombre, Mode=OneWay}"/>
+                                                            </TextBlock>
+                                                            <TextBlock Text="{Binding Notas, Mode=OneWay}"
+                                                                       Foreground="#BBBBBB" FontSize="12"
+                                                                       TextWrapping="Wrap"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                            <TextBlock Text="OBSERVACIONES" Foreground="#888888"
+                                                       FontSize="10" FontWeight="Bold" Margin="0,4,0,6"/>
+                                            <TextBlock Foreground="#BBBBBB" FontSize="12" TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Setter Property="Text" Value="{Binding Observaciones}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Observaciones}" Value="">
+                                                                <Setter Property="Text" Value="Sin observaciones"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+
+                                            <Border Height="1" Background="#383838" Margin="0,18,0,16"/>
+
+                                            <Grid Margin="0,0,0,16">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="TOTAL DEL PEDIDO" Foreground="#999999"
+                                                           FontSize="10" FontWeight="SemiBold"
+                                                           VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding TotalTexto, Mode=OneWay}"
+                                                           Foreground="White" FontSize="16"
+                                                           FontWeight="Bold" Margin="8,0,0,0"/>
+                                            </Grid>
+
+                                            <Border Background="#242424" CornerRadius="6"
+                                                    Padding="10,8" HorizontalAlignment="Left">
+                                                <TextBlock Text="{Binding EstadoTexto, Mode=OneWay}"
+                                                           Foreground="{Binding ColorEstado, Mode=OneWay}"
+                                                           FontSize="11" FontWeight="Bold"/>
+                                            </Border>
+
+                                            <Button Content="VER TICKET" Tag="{Binding}"
+                                                    Click="BtnVerTicket_Click"
+                                                    Style="{StaticResource BotonInicio}"
+                                                    Height="38" Margin="0,14,0,0" Padding="12,0"/>
+                                            <Button Content="{Binding AccionTexto, Mode=OneWay}"
+                                                    Background="{Binding ColorPrincipal, Mode=OneWay}"
+                                                    Tag="{Binding}" Click="BtnAvanzarEstado_Click"
+                                                    Style="{StaticResource BotonEstado}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
