@@ -185,6 +185,9 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="18,0,0,0">
+                <Button Content="ADMIN PLATOS" Click="BtnAdminPlatos_Click"
+                        Style="{StaticResource BotonOscuro}" Height="32" Padding="12,0"
+                        FontSize="11" Margin="0,0,0,8" ToolTip="Agregar, modificar o eliminar platos del menú"/>
                 <Button Content="ABRIR COCINA ↗" Click="BtnAbrirCocina_Click"
                         Style="{StaticResource BotonOscuro}" Foreground="#F5A623"
                         Height="38" Padding="12,0" FontSize="11" Margin="0,0,0,8"/>
@@ -224,7 +227,7 @@
                         </StackPanel>
                         <Border Grid.Column="1" Background="#30271B" CornerRadius="6"
                                 Padding="10,7" VerticalAlignment="Top">
-                            <TextBlock x:Name="TextoCantidadMenu" Text="4 PRODUCTOS"
+                            <TextBlock x:Name="TextoCantidadMenu" Text="0 PRODUCTOS"
                                        Foreground="#F5A623" FontSize="10" FontWeight="Bold"/>
                         </Border>
                     </Grid>
@@ -264,16 +267,16 @@
                     </Border>
 
                     <WrapPanel Grid.Row="2" Margin="0,0,0,4">
-                        <RadioButton x:Name="CategoriaHamburguesas" Content="Hamburguesas"
+                        <RadioButton x:Name="CategoriaTodos" Content="Todos" Tag="Todos"
                                      GroupName="CategoriasProductos" IsChecked="True"
                                      Checked="Categoria_Checked" Style="{StaticResource CategoriaMenu}"/>
-                        <RadioButton x:Name="CategoriaAcompanamientos" Content="Acompañamientos"
+                        <RadioButton x:Name="CategoriaComida" Content="Comida" Tag="Comida"
                                      GroupName="CategoriasProductos"
                                      Checked="Categoria_Checked" Style="{StaticResource CategoriaMenu}"/>
-                        <RadioButton x:Name="CategoriaBebidas" Content="Bebidas"
+                        <RadioButton x:Name="CategoriaAcompanamiento" Content="Acompañamiento" Tag="Acompañamiento"
                                      GroupName="CategoriasProductos"
                                      Checked="Categoria_Checked" Style="{StaticResource CategoriaMenu}"/>
-                        <RadioButton x:Name="CategoriaAdicionales" Content="Adicionales"
+                        <RadioButton x:Name="CategoriaBebida" Content="Bebida" Tag="Bebida"
                                      GroupName="CategoriasProductos"
                                      Checked="Categoria_Checked" Style="{StaticResource CategoriaMenu}"/>
                     </WrapPanel>
@@ -314,121 +317,7 @@
                             </Style>
                         </ScrollViewer.Resources>
 
-                        <UniformGrid Columns="2" VerticalAlignment="Top">
-
-                            <ToggleButton x:Name="TarjetaClasica" Tag="clasica"
-                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
-                                <StackPanel>
-                                    <Border Height="80" Background="#30271B" CornerRadius="8">
-                                        <TextBlock Text="🍔" FontSize="48"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="PLÁTANO CLÁSICA" Foreground="White" FontSize="13"
-                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
-                                    <TextBlock Text="Hamburguesa de plátano" Foreground="#999999"
-                                               FontSize="10" TextWrapping="Wrap"/>
-                                    <TextBlock Text="$ 15.000" Foreground="#F5A623" FontSize="17"
-                                               FontWeight="Bold" Margin="0,12,0,0"/>
-                                </StackPanel>
-                            </ToggleButton>
-
-                            <ToggleButton x:Name="TarjetaDoble" Tag="doble"
-                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
-                                <StackPanel>
-                                    <Border Height="80" Background="#30271B" CornerRadius="8">
-                                        <TextBlock Text="🍔" FontSize="48"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="DOBLE PLÁTANO" Foreground="White" FontSize="13"
-                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
-                                    <TextBlock Text="Doble porción de sabor" Foreground="#999999"
-                                               FontSize="10" TextWrapping="Wrap"/>
-                                    <TextBlock Text="$ 20.000" Foreground="#F5A623" FontSize="17"
-                                               FontWeight="Bold" Margin="0,12,0,0"/>
-                                </StackPanel>
-                            </ToggleButton>
-
-                            <ToggleButton x:Name="TarjetaCombo" Tag="combo"
-                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
-                                <StackPanel>
-                                    <Border Height="80" Background="#30271B" CornerRadius="8">
-                                        <TextBlock Text="🍟" FontSize="48"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="COMBO BURGER" Foreground="White" FontSize="13"
-                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
-                                    <TextBlock Text="Hamburguesa y acompañamiento" Foreground="#999999"
-                                               FontSize="10" TextWrapping="Wrap"/>
-                                    <TextBlock Text="$ 24.000" Foreground="#F5A623" FontSize="17"
-                                               FontWeight="Bold" Margin="0,12,0,0"/>
-                                </StackPanel>
-                            </ToggleButton>
-
-                            <ToggleButton x:Name="TarjetaEspecial" Tag="especial"
-                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
-                                <StackPanel>
-                                    <Border Height="80" Background="#30271B" CornerRadius="8">
-                                        <TextBlock Text="🍔" FontSize="48"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="BURGER ESPECIAL" Foreground="White" FontSize="13"
-                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
-                                    <TextBlock Text="Una combinación especial" Foreground="#999999"
-                                               FontSize="10" TextWrapping="Wrap"/>
-                                    <TextBlock Text="$ 22.000" Foreground="#F5A623" FontSize="17"
-                                               FontWeight="Bold" Margin="0,12,0,0"/>
-                                </StackPanel>
-                            </ToggleButton>
-
-                            <ToggleButton x:Name="TarjetaPapas" Tag="papas"
-                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
-                                <StackPanel>
-                                    <Border Height="80" Background="#30271B" CornerRadius="8">
-                                        <TextBlock Text="🍟" FontSize="48"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="PAPAS FRITAS" Foreground="White" FontSize="13"
-                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
-                                    <TextBlock Text="Porción de papas crujientes" Foreground="#999999"
-                                               FontSize="10" TextWrapping="Wrap"/>
-                                    <TextBlock Text="$ 6.000" Foreground="#F5A623" FontSize="17"
-                                               FontWeight="Bold" Margin="0,12,0,0"/>
-                                </StackPanel>
-                            </ToggleButton>
-
-                            <ToggleButton x:Name="TarjetaGaseosa" Tag="gaseosa"
-                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
-                                <StackPanel>
-                                    <Border Height="80" Background="#30271B" CornerRadius="8">
-                                        <TextBlock Text="🥤" FontSize="48"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="GASEOSA PERSONAL" Foreground="White" FontSize="13"
-                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
-                                    <TextBlock Text="Bebida personal de 400 ml" Foreground="#999999"
-                                               FontSize="10" TextWrapping="Wrap"/>
-                                    <TextBlock Text="$ 4.000" Foreground="#F5A623" FontSize="17"
-                                               FontWeight="Bold" Margin="0,12,0,0"/>
-                                </StackPanel>
-                            </ToggleButton>
-
-                            <ToggleButton x:Name="TarjetaQueso" Tag="queso"
-                                          Click="Producto_Click" Style="{StaticResource TarjetaProducto}">
-                                <StackPanel>
-                                    <Border Height="80" Background="#30271B" CornerRadius="8">
-                                        <TextBlock Text="🧀" FontSize="48"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="QUESO EXTRA" Foreground="White" FontSize="13"
-                                               FontWeight="Bold" TextWrapping="Wrap" Margin="0,12,0,5"/>
-                                    <TextBlock Text="Porción adicional de queso" Foreground="#999999"
-                                               FontSize="10" TextWrapping="Wrap"/>
-                                    <TextBlock Text="$ 3.000" Foreground="#F5A623" FontSize="17"
-                                               FontWeight="Bold" Margin="0,12,0,0"/>
-                                </StackPanel>
-                            </ToggleButton>
-
-                        </UniformGrid>
+                        <UniformGrid x:Name="GrillaProductos" Columns="2" VerticalAlignment="Top"/>
                     </ScrollViewer>
                 </Grid>
             </Border>
@@ -477,8 +366,6 @@
                                               SelectionChanged="SelectorMesero_SelectionChanged"
                                               MinHeight="28" FontSize="12" Foreground="Black"
                                               ToolTip="Mesero responsable del pedido">
-                                        <ComboBoxItem Content="Carlos Mesero"/>
-                                        <ComboBoxItem Content="Laura Mesera"/>
                                     </ComboBox>
                                 </Border>
                             </StackPanel>
@@ -631,13 +518,56 @@
                             <Button Content="ENVIAR A COCINA  →" Click="BtnEnviarCocina_Click"
                                     Style="{StaticResource BotonNaranja}" Height="50" FontSize="13"/>
 
+                            <Border Background="#1E1A12" BorderBrush="#5C4A28" BorderThickness="1"
+                                    CornerRadius="8" Padding="12" Margin="0,20,0,0">
+                                <StackPanel>
+                                    <TextBlock x:Name="TextoSolicitudes" Text="SOLICITUDES DEL CLIENTE: 0"
+                                               Foreground="#F5A623" FontSize="12"
+                                               FontWeight="Bold" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Pedidos enviados desde el menú web (NFC / QR / asistente IA)"
+                                               Foreground="#999999" FontSize="10"
+                                               TextWrapping="Wrap" Margin="0,5,0,10"/>
+                                    <TextBlock x:Name="MensajeSinSolicitudes"
+                                               Text="No hay solicitudes por revisar."
+                                               Foreground="#AAAAAA" FontSize="11" TextWrapping="Wrap"/>
+                                    <ItemsControl x:Name="ListaSolicitudesCliente">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#1C1C1C" CornerRadius="6"
+                                                        Padding="10" Margin="0,0,0,8">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Resumen, Mode=OneWay}"
+                                                                   Foreground="White" FontSize="13"
+                                                                   FontWeight="Bold" TextWrapping="Wrap"/>
+                                                        <TextBlock Text="{Binding ProductosTexto, Mode=OneWay}"
+                                                                   Foreground="#DDDDDD" FontSize="11"
+                                                                   TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                        <TextBlock Text="{Binding DetalleEntrega, Mode=OneWay}"
+                                                                   Foreground="#AAAAAA" FontSize="11"
+                                                                   TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                                        <Button Content="APROBAR Y ENVIAR A COCINA" Tag="{Binding}"
+                                                                Click="BtnAprobarSolicitud_Click"
+                                                                Style="{StaticResource BotonNaranja}"
+                                                                Height="38" FontSize="10" Margin="0,10,0,6"/>
+                                                        <Button Content="RECHAZAR" Tag="{Binding}"
+                                                                Click="BtnRechazarSolicitud_Click"
+                                                                Style="{StaticResource BotonOscuro}"
+                                                                Foreground="#FF6464" Height="32" FontSize="10"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+
                             <Border Background="#14241B" BorderBrush="#285C40" BorderThickness="1"
                                     CornerRadius="8" Padding="12" Margin="0,20,0,0">
                                 <StackPanel>
                                     <TextBlock x:Name="TextoListosMesero" Text="LISTOS PARA RECOGER: 0"
                                                Foreground="#39D98A" FontSize="12"
                                                FontWeight="Bold" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Pedidos del mesero seleccionado"
+                                    <TextBlock Text="Pedidos que cocina marcó como listos"
                                                Foreground="#999999" FontSize="10"
                                                TextWrapping="Wrap" Margin="0,5,0,10"/>
                                     <TextBlock x:Name="MensajeSinListos"

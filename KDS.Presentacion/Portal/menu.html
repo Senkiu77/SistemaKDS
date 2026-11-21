@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0b">
+<title>Menú KDS</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icono.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+  :root {
+    --fondo: #0b0b0b;
+    --panel: #161616;
+    --panel-2: #202020;
+    --borde: #303030;
+    --texto: #f2f2f2;
+    --suave: #9a9a9a;
+    --naranja: #f5a623;
+    --naranja-osc: #30271b;
+    --verde: #39d98a;
+    --rojo: #ff6464;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--fondo); color: var(--texto); font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
+  body { padding-bottom: 96px; }
+  button { font: inherit; cursor: pointer; border: none; }
+  header {
+    position: sticky; top: 0; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 16px; background: rgba(11, 11, 11, .95); border-bottom: 1px solid var(--borde);
+  }
+  .marca { display: flex; align-items: center; gap: 10px; }
+  .logo { background: var(--naranja); color: #0b0b0b; font-weight: 800; padding: 4px 8px; border-radius: 6px; }
+  .marca small { display: block; color: var(--suave); font-size: 11px; }
+  .mesa-chip { background: var(--naranja-osc); color: var(--naranja); border: 1px solid var(--naranja); border-radius: 20px; padding: 6px 12px; font-size: 13px; font-weight: 600; }
+  main { max-width: 720px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 24px; margin: 4px 0 4px; }
+  .sub { color: var(--suave); margin: 0 0 16px; font-size: 14px; }
+  .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px; scrollbar-width: none; }
+  .tab { white-space: nowrap; background: var(--panel-2); color: #bbb; border: 1px solid var(--borde); padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+  .tab.activa { background: var(--naranja); color: #111; border-color: var(--naranja); }
+  .platos { display: grid; gap: 10px; }
+  .plato { display: flex; align-items: center; gap: 12px; background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 12px; }
+  .plato .icono { width: 54px; height: 54px; flex: none; display: grid; place-items: center; background: var(--naranja-osc); border-radius: 10px; font-size: 28px; }
+  .plato .info { flex: 1; min-width: 0; }
+  .plato .nombre { font-weight: 600; font-size: 15px; }
+  .plato .precio { color: var(--naranja); font-weight: 700; margin-top: 4px; }
+  .btn-agregar { background: var(--naranja); color: #111; font-weight: 700; border-radius: 8px; padding: 9px 14px; }
+  .btn-agregar.en-carrito { background: var(--naranja-osc); color: var(--naranja); border: 1px solid var(--naranja); }
+  .vacio { color: var(--suave); text-align: center; padding: 30px 10px; }
+  .barra {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+    display: flex; gap: 10px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(11, 11, 11, .97); border-top: 1px solid var(--borde);
+  }
+  .barra button { flex: 1; padding: 14px; border-radius: 10px; font-weight: 700; }
+  .btn-bot { background: var(--panel-2); color: var(--texto); border: 1px solid var(--borde) !important; }
+  .btn-carrito { background: var(--naranja); color: #111; }
+  .btn-carrito:disabled { background: #2a2a2a; color: #777; }
+  .capa { position: fixed; inset: 0; background: rgba(0, 0, 0, .6); z-index: 10; display: none; }
+  .capa.abierta { display: block; }
+  .hoja {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 11;
+    max-height: 88vh; display: none; flex-direction: column;
+    background: var(--panel); border-top: 1px solid var(--borde); border-radius: 16px 16px 0 0;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  }
+  .hoja.abierta { display: flex; }
+  .hoja-cabeza { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .hoja-cabeza h2 { margin: 0; font-size: 18px; }
+  .cerrar { background: var(--panel-2); color: var(--texto); width: 34px; height: 34px; border-radius: 50%; font-size: 18px; }
+  .lista { overflow-y: auto; flex: 1; }
+  .linea { background: var(--panel-2); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+  .linea-top { display: flex; justify-content: space-between; gap: 8px; }
+  .cantidad { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .cantidad button { width: 32px; height: 32px; border-radius: 8px; background: #2c2c2c; color: var(--texto); font-size: 18px; }
+  .linea input { width: 100%; margin-top: 8px; background: #111; color: var(--texto); border: 1px solid var(--borde); border-radius: 8px; padding: 8px; font: inherit; font-size: 13px; }
+  .total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; margin: 10px 0; }
+  .total span:last-child { color: var(--naranja); }
+  .btn-enviar { width: 100%; background: var(--naranja); color: #111; font-weight: 800; border-radius: 10px; padding: 15px; font-size: 15px; }
+  .btn-enviar:disabled { opacity: .5; }
+  .chat { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; min-height: 200px; }
+  .burbuja { max-width: 86%; padding: 10px 12px; border-radius: 12px; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
+  .burbuja.cliente { align-self: flex-end; background: var(--naranja); color: #111; border-bottom-right-radius: 4px; }
+  .burbuja.bot { align-self: flex-start; background: var(--panel-2); border-bottom-left-radius: 4px; }
+  .sugeridos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .sugeridos button { background: var(--naranja-osc); color: var(--naranja); border: 1px solid var(--naranja); border-radius: 16px; padding: 6px 10px; font-size: 12px; font-weight: 600; }
+  .atajos { display: flex; gap: 6px; overflow-x: auto; margin: 8px 0; scrollbar-width: none; }
+  .atajos button { white-space: nowrap; background: var(--panel-2); color: #ccc; border: 1px solid var(--borde); border-radius: 16px; padding: 6px 10px; font-size: 12px; }
+  .entrada { display: flex; gap: 8px; }
+  .entrada input { flex: 1; min-width: 0; background: #111; color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 12px; font: inherit; }
+  .entrada button { background: var(--naranja); color: #111; font-weight: 700; border-radius: 10px; padding: 0 16px; }
+  .elegir-mesa { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 12px; }
+  .elegir-mesa button { background: var(--panel-2); color: var(--texto); border: 1px solid var(--borde); border-radius: 10px; padding: 14px 0; font-weight: 700; }
+  .estado { background: #14241b; border: 1px solid #285c40; color: var(--verde); border-radius: 12px; padding: 14px; margin-bottom: 16px; display: none; }
+  .estado.visible { display: block; }
+  .estado.rechazado { background: #3c1d1d; border-color: #6b2c2c; color: var(--rojo); }
+  .aviso { position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%); background: #262626; border: 1px solid var(--borde); padding: 10px 16px; border-radius: 20px; font-size: 13px; z-index: 20; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .aviso.visible { opacity: 1; }
+  .estado { cursor: pointer; }
+  .beeper {
+    position: fixed; inset: 0; z-index: 30; display: none; flex-direction: column; align-items: center;
+    overflow-y: auto; padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); background: var(--fondo); text-align: center;
+  }
+  .beeper.abierto { display: flex; }
+  .beeper .cabeza { width: 100%; max-width: 420px; display: flex; justify-content: space-between; align-items: center; color: var(--suave); font-size: 13px; }
+  .pager {
+    width: 230px; height: 230px; border-radius: 50%; margin: 28px 0 18px;
+    display: grid; place-items: center; align-content: center; gap: 6px;
+    background: radial-gradient(circle at 50% 40%, #262626, #141414); border: 3px solid var(--borde);
+  }
+  .pager .icono-pager { font-size: 64px; line-height: 1; }
+  .pager .num { font-size: 15px; color: var(--suave); font-weight: 600; letter-spacing: .5px; }
+  .beeper h2 { margin: 0 0 6px; font-size: 24px; max-width: 420px; }
+  .beeper .detalle { color: var(--suave); margin: 0 0 18px; max-width: 380px; font-size: 14px; line-height: 1.45; }
+  .pasos { display: flex; gap: 6px; width: 100%; max-width: 420px; margin-bottom: 22px; }
+  .paso { flex: 1; font-size: 11px; color: #666; }
+  .paso::before { content: ""; display: block; height: 6px; border-radius: 3px; background: #2a2a2a; margin-bottom: 6px; }
+  .paso.hecho { color: var(--naranja); }
+  .paso.hecho::before { background: var(--naranja); }
+  .beeper .acciones { width: 100%; max-width: 420px; display: grid; gap: 10px; }
+  .beeper .acciones button { padding: 14px; border-radius: 10px; font-weight: 700; font-size: 15px; }
+  .btn-primario { background: var(--naranja); color: #111; }
+  .btn-secundario { background: var(--panel-2); color: var(--texto); border: 1px solid var(--borde) !important; }
+  .btn-secundario.activo { border-color: var(--verde) !important; color: var(--verde); }
+  .tip { color: var(--suave); font-size: 12px; max-width: 380px; margin-top: 14px; line-height: 1.4; }
+  .beeper.sonando { animation: titilar 1s infinite; }
+  .beeper.sonando .pager { border-color: var(--naranja); animation: latido .8s infinite; }
+  .beeper.rechazado .pager { border-color: var(--rojo); }
+  @keyframes titilar { 0%, 100% { background: var(--fondo); } 50% { background: #3a2b16; } }
+  @keyframes latido { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+  .plati-zona { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .plati-grande { width: 96px; height: 104px; flex: none; cursor: pointer; touch-action: manipulation; }
+  .plati-globo { flex: 1; background: var(--panel-2); border: 1px solid var(--borde); border-radius: 14px; padding: 10px 12px; font-size: 13px; color: #ddd; position: relative; min-height: 44px; }
+  .plati-globo::before { content: ""; position: absolute; left: -7px; top: 18px; width: 12px; height: 12px; background: var(--panel-2); border-left: 1px solid var(--borde); border-bottom: 1px solid var(--borde); transform: rotate(45deg); }
+  .plati-flotante { position: fixed; left: 10px; bottom: calc(84px + env(safe-area-inset-bottom)); width: 64px; height: 70px; z-index: 7; cursor: pointer; filter: drop-shadow(0 6px 10px rgba(0,0,0,.5)); transition: transform .3s; touch-action: manipulation; }
+  .plati-flotante.escondido { transform: translateY(160%); }
+  .plati-flotante .burbujita { position: absolute; left: 62px; top: 4px; background: #fff; color: #111; font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 12px; white-space: nowrap; opacity: 0; transform: translateX(-8px); transition: all .3s; pointer-events: none; }
+  .plati-flotante .burbujita.visible { opacity: 1; transform: none; }
+  .plati svg { width: 100%; height: 100%; overflow: visible; }
+  .plati .cuerpo { transform-origin: 60px 120px; animation: flotar 3s ease-in-out infinite; }
+  .plati .parpado { transform-box: fill-box; transform-origin: center; animation: parpadear 4.5s infinite; }
+  .plati .pupila { transition: transform .12s; }
+  .plati .boca-abierta, .plati .puntos, .plati .ondas, .plati .boca-o { opacity: 0; }
+  .plati .brazo-der { transform-box: fill-box; transform-origin: 10% 90%; }
+  .plati .ondas path { animation: onda 1s ease-out infinite; }
+  .plati .ondas path:nth-child(2) { animation-delay: .25s; }
+  .plati .puntos circle { animation: punto 1.2s infinite; }
+  .plati .puntos circle:nth-child(2) { animation-delay: .2s; }
+  .plati .puntos circle:nth-child(3) { animation-delay: .4s; }
+  body[data-plati="escuchando"] .plati .ondas { opacity: 1; }
+  body[data-plati="escuchando"] .plati .boca-cerrada { opacity: 0; }
+  body[data-plati="escuchando"] .plati .boca-o { opacity: 1; }
+  body[data-plati="escuchando"] .plati .cuerpo { animation: inclinar 1.4s ease-in-out infinite; }
+  body[data-plati="pensando"] .plati .puntos { opacity: 1; }
+  body[data-plati="pensando"] .plati .pupila { transform: translate(2px, -3px) !important; }
+  body[data-plati="hablando"] .plati .boca-cerrada { opacity: 0; }
+  body[data-plati="hablando"] .plati .boca-abierta { opacity: 1; transform-box: fill-box; transform-origin: center; animation: hablar .22s infinite alternate; }
+  body[data-plati="feliz"] .plati .cuerpo { animation: saltar .5s ease-out 2; }
+  body[data-plati="feliz"] .plati .brazo-der, body[data-plati="saludando"] .plati .brazo-der { animation: saludar .35s ease-in-out 4 alternate; }
+  body[data-plati="saludando"] .plati .boca-cerrada { opacity: 0; }
+  body[data-plati="saludando"] .plati .boca-abierta { opacity: 1; }
+  @keyframes flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @keyframes parpadear { 0%, 93%, 100% { transform: scaleY(0); } 96% { transform: scaleY(1); } }
+  @keyframes hablar { from { transform: scaleY(.35); } to { transform: scaleY(1.1); } }
+  @keyframes saltar { 0%, 100% { transform: translateY(0) scale(1); } 40% { transform: translateY(-12px) scale(1.04, .97); } }
+  @keyframes saludar { from { transform: rotate(0deg); } to { transform: rotate(-35deg); } }
+  @keyframes inclinar { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-5deg); } }
+  @keyframes onda { from { opacity: 1; transform: scale(.8); } to { opacity: 0; transform: scale(1.3); } }
+  @keyframes punto { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+  .btn-microfono { background: var(--panel-2) !important; color: var(--texto) !important; border: 1px solid var(--borde) !important; font-size: 18px; padding: 0 14px !important; }
+  .btn-microfono.grabando { background: var(--rojo) !important; color: #111 !important; border-color: var(--rojo) !important; animation: latido .8s infinite; }
+  .burbuja.voz::before { content: "🎤 "; }
+  .burbuja.escuchando { opacity: .7; font-style: italic; }
+  .voz-control { background: var(--panel-2); color: var(--texto); border: 1px solid var(--borde); border-radius: 16px; padding: 6px 10px; font-size: 12px; margin-right: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="marca">
+    <span class="logo">KDS</span>
+    <div><strong>Menú digital</strong><small>Pide desde tu celular</small></div>
+  </div>
+  <button class="mesa-chip" id="chipMesa" type="button">Mesa —</button>
+</header>
+
+<main>
+  <div class="estado" id="estadoPedido"></div>
+  <h1>¿Qué se te antoja hoy?</h1>
+  <p class="sub">Arma tu pedido y se lo enviamos al mesero. Si tienes dudas, pregúntale al asistente.</p>
+  <div class="tabs" id="tabs"></div>
+  <div class="platos" id="platos"><p class="vacio">Cargando la carta…</p></div>
+</main>
+
+<div class="barra">
+  <button class="btn-bot" id="abrirBot" type="button">💬 Plati</button>
+  <button class="btn-carrito" id="abrirCarrito" type="button" disabled>Ver pedido</button>
+</div>
+
+<div class="plati plati-flotante" id="platiFlotante" role="button" aria-label="Hablar con Plati"><span class="burbujita" id="platiBurbujita">¿Te ayudo?</span></div>
+
+<div class="capa" id="capa"></div>
+
+<section class="hoja" id="hojaCarrito" aria-label="Tu pedido">
+  <div class="hoja-cabeza"><h2>Tu pedido</h2><button class="cerrar" data-cerrar type="button">×</button></div>
+  <div class="lista" id="listaCarrito"></div>
+  <div class="total"><span>Total</span><span id="totalCarrito">$0</span></div>
+  <button class="btn-enviar" id="enviarPedido" type="button">Enviar solicitud al mesero</button>
+</section>
+
+<section class="hoja" id="hojaBot" aria-label="Asistente">
+  <div class="hoja-cabeza"><h2>Plati, tu asistente</h2><div><button class="voz-control" id="vozBot" type="button">🔊 Voz activada</button><button class="cerrar" data-cerrar type="button">×</button></div></div>
+  <div class="plati-zona">
+    <div class="plati plati-grande" id="platiGrande" role="button" aria-label="Saludar a Plati"></div>
+    <div class="plati-globo" id="platiGlobo">Tócame, escríbeme o mándame un mensaje de voz con el 🎤.</div>
+  </div>
+  <div class="chat" id="chat"></div>
+  <div class="atajos">
+    <button type="button">Tengo 25.000, ¿qué me alcanza?</button>
+    <button type="button">¿Qué me recomiendas?</button>
+    <button type="button">Algo para tomar</button>
+    <button type="button">Lo más económico</button>
+  </div>
+  <form class="entrada" id="formBot">
+    <input id="preguntaBot" maxlength="500" autocomplete="off" placeholder="Ej: tengo 30 mil y sin cebolla">
+    <button class="btn-microfono" id="microfono" type="button" aria-label="Mandar mensaje de voz">🎤</button>
+    <button type="submit">Enviar</button>
+  </form>
+</section>
+
+<section class="hoja" id="hojaMesa" aria-label="Elegir mesa">
+  <div class="hoja-cabeza"><h2>¿En qué mesa estás?</h2><button class="cerrar" data-cerrar type="button">×</button></div>
+  <p class="sub">Si escaneaste el sticker de la mesa, ya debería estar marcada.</p>
+  <div class="elegir-mesa" id="elegirMesa"></div>
+</section>
+
+<section class="beeper" id="beeper" aria-live="assertive">
+  <div class="cabeza"><span id="beeperMesa">Mesa —</span><span id="beeperHora"></span></div>
+  <div class="pager"><div class="icono-pager" id="beeperIcono">🕐</div><div class="num" id="beeperNumero">PEDIDO #—</div></div>
+  <h2 id="beeperTitulo">Pedido enviado</h2>
+  <p class="detalle" id="beeperDetalle">Ya puedes alejarte. Cuando la cocina termine, te vibra el celular.</p>
+  <div class="pasos">
+    <div class="paso" data-paso="Solicitado">Enviado</div>
+    <div class="paso" data-paso="Pendiente">Aprobado</div>
+    <div class="paso" data-paso="Preparando">En cocina</div>
+    <div class="paso" data-paso="Listo">¡Listo!</div>
+  </div>
+  <div class="acciones">
+    <button class="btn-primario" id="yaLoRecogi" type="button" hidden>Ya lo recogí</button>
+    <button class="btn-secundario" id="activarAvisos" type="button">🔔 Activar avisos en este celular</button>
+    <button class="btn-secundario" id="pantallaEncendida" type="button">💡 Mantener pantalla encendida</button>
+    <button class="btn-secundario" id="probarBeeper" type="button">📳 Probar vibración</button>
+    <button class="btn-secundario" id="cerrarBeeper" type="button">Seguir viendo el menú</button>
+  </div>
+  <p class="tip" id="beeperTip"></p>
+</section>
+
+<div class="aviso" id="aviso"></div>
+
+<script>
+const pesos = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+const $ = id => document.getElementById(id);
+
+const estado = {
+  mesa: leerMesa(),
+  menu: [],
+  categoria: "Todos",
+  carrito: new Map(),
+  historial: [],
+  pedidoActivo: leerSesion("kdsPedido"),
+  ultimoEstado: "",
+  alarma: null,
+  bloqueoPantalla: null,
+  quierePantalla: false,
+  audio: null,
+  registro: null,
+  notaBot: ""
+};
+
+function leerSesion(clave) {
+  try { return Number(localStorage.getItem(clave)) || 0; } catch (e) { return 0; }
+}
+
+function guardarSesion(clave, valor) {
+  try {
+    if (valor === null) localStorage.removeItem(clave);
+    else localStorage.setItem(clave, valor);
+  } catch (e) {}
+}
+
+function leerMesa() {
+  const desdeUrl = Number(new URLSearchParams(location.search).get("mesa"));
+  if (desdeUrl >= 1 && desdeUrl <= 50) {
+    try { localStorage.setItem("kdsMesa", desdeUrl); } catch (e) {}
+    return desdeUrl;
+  }
+  try { return Number(localStorage.getItem("kdsMesa")) || 0; } catch (e) { return 0; }
+}
+
+function elemento(tag, clase, texto) {
+  const el = document.createElement(tag);
+  if (clase) el.className = clase;
+  if (texto !== undefined) el.textContent = texto;
+  return el;
+}
+
+function avisar(texto) {
+  const a = $("aviso");
+  a.textContent = texto;
+  a.classList.add("visible");
+  clearTimeout(avisar.t);
+  avisar.t = setTimeout(() => a.classList.remove("visible"), 2200);
+}
+
+async function pedirJson(url, opciones) {
+  const r = await fetch(url, opciones);
+  const datos = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(datos.error || "No pudimos conectarnos con el restaurante.");
+  return datos;
+}
+
+function pintarMesa() {
+  $("chipMesa").textContent = estado.mesa ? `Mesa ${String(estado.mesa).padStart(2, "0")}` : "Elegir mesa";
+}
+
+async function cargarMenu() {
+  try {
+    estado.menu = await pedirJson("/api/menu");
+    pintarTabs();
+    pintarPlatos();
+  } catch (e) {
+    $("platos").replaceChildren(elemento("p", "vacio", e.message));
+  }
+}
+
+function pintarTabs() {
+  const categorias = ["Todos", ...["Comida", "Acompañamiento", "Bebida"].filter(c => estado.menu.some(p => p.categoria === c))];
+  const cont = $("tabs");
+  cont.replaceChildren();
+  categorias.forEach(c => {
+    const b = elemento("button", "tab" + (c === estado.categoria ? " activa" : ""), c);
+    b.type = "button";
+    b.onclick = () => { estado.categoria = c; pintarTabs(); pintarPlatos(); };
+    cont.appendChild(b);
+  });
+}
+
+function pintarPlatos() {
+  const cont = $("platos");
+  cont.replaceChildren();
+  const visibles = estado.menu.filter(p => estado.categoria === "Todos" || p.categoria === estado.categoria);
+
+  if (visibles.length === 0) {
+    cont.appendChild(elemento("p", "vacio", "No hay platos disponibles en esta categoría."));
+    return;
+  }
+
+  visibles.forEach(p => {
+    const fila = elemento("div", "plato");
+    fila.appendChild(elemento("div", "icono", p.icono));
+    const info = elemento("div", "info");
+    info.appendChild(elemento("div", "nombre", p.nombre));
+    info.appendChild(elemento("div", "precio", pesos.format(p.precio)));
+    fila.appendChild(info);
+
+    const enCarrito = estado.carrito.get(p.id);
+    const btn = elemento("button", "btn-agregar" + (enCarrito ? " en-carrito" : ""), enCarrito ? `${enCarrito.cantidad} en pedido` : "Agregar");
+    btn.type = "button";
+    btn.onclick = () => agregar(p.id);
+    fila.appendChild(btn);
+    cont.appendChild(fila);
+  });
+}
+
+function agregar(id, nota) {
+  const plato = estado.menu.find(p => p.id === id);
+  if (!plato) return;
+  const linea = estado.carrito.get(id) || { plato, cantidad: 0, nota: "" };
+  linea.cantidad = Math.min(linea.cantidad + 1, 20);
+  if (nota && !linea.nota) linea.nota = nota;
+  estado.carrito.set(id, linea);
+  avisar(`${plato.nombre} agregado`);
+  ponerPlati("feliz", 1100);
+  actualizarCarrito();
+}
+
+function cambiarCantidad(id, delta) {
+  const linea = estado.carrito.get(id);
+  if (!linea) return;
+  linea.cantidad += delta;
+  if (linea.cantidad <= 0) estado.carrito.delete(id);
+  else linea.cantidad = Math.min(linea.cantidad, 20);
+  actualizarCarrito();
+}
+
+function actualizarCarrito() {
+  const lineas = [...estado.carrito.values()];
+  const unidades = lineas.reduce((s, l) => s + l.cantidad, 0);
+  const total = lineas.reduce((s, l) => s + l.cantidad * l.plato.precio, 0);
+
+  const boton = $("abrirCarrito");
+  boton.disabled = unidades === 0;
+  boton.textContent = unidades === 0 ? "Ver pedido" : `Ver pedido (${unidades}) · ${pesos.format(total)}`;
+  $("totalCarrito").textContent = pesos.format(total);
+
+  const lista = $("listaCarrito");
+  lista.replaceChildren();
+  if (lineas.length === 0) {
+    lista.appendChild(elemento("p", "vacio", "Todavía no has agregado platos."));
+  }
+
+  lineas.forEach(l => {
+    const caja = elemento("div", "linea");
+    const top = elemento("div", "linea-top");
+    top.appendChild(elemento("strong", "", l.plato.nombre));
+    top.appendChild(elemento("span", "", pesos.format(l.plato.precio * l.cantidad)));
+    caja.appendChild(top);
+
+    const cant = elemento("div", "cantidad");
+    const menos = elemento("button", "", "−"); menos.type = "button"; menos.onclick = () => cambiarCantidad(l.plato.id, -1);
+    const mas = elemento("button", "", "+"); mas.type = "button"; mas.onclick = () => cambiarCantidad(l.plato.id, 1);
+    cant.append(menos, elemento("span", "", String(l.cantidad)), mas);
+    caja.appendChild(cant);
+
+    const nota = document.createElement("input");
+    nota.placeholder = "Nota para cocina (ej: sin cebolla)";
+    nota.maxLength = 200;
+    nota.value = l.nota;
+    nota.oninput = () => { l.nota = nota.value; };
+    caja.appendChild(nota);
+    lista.appendChild(caja);
+  });
+
+  $("enviarPedido").disabled = lineas.length === 0;
+  pintarPlatos();
+}
+
+async function enviarPedido() {
+  if (!estado.mesa) { abrir("hojaMesa"); avisar("Primero dinos en qué mesa estás"); return; }
+  if (estado.carrito.size === 0) return;
+
+  prepararSonido();
+  const boton = $("enviarPedido");
+  boton.disabled = true;
+  boton.textContent = "Enviando…";
+
+  try {
+    const items = [...estado.carrito.values()].map(l => ({ idPlato: l.plato.id, cantidad: l.cantidad, nota: l.nota.trim() }));
+    const r = await pedirJson("/api/solicitud", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mesa: estado.mesa, items })
+    });
+
+    estado.carrito.clear();
+    estado.pedidoActivo = r.idPedido;
+    estado.ultimoEstado = "";
+    guardarSesion("kdsPedido", r.idPedido);
+    actualizarCarrito();
+    cerrarTodo();
+    mostrarEstado("Solicitado");
+    abrirBeeper();
+    avisar(r.mensaje);
+  } catch (e) {
+    avisar(e.message);
+  } finally {
+    boton.textContent = "Enviar solicitud al mesero";
+    boton.disabled = estado.carrito.size === 0;
+  }
+}
+
+const textosEstado = {
+  Solicitado: "🕐 Tu pedido le llegó al mesero. En un momento lo confirma.",
+  Pendiente: "✅ El mesero aprobó tu pedido y ya está en la cocina.",
+  Preparando: "👨‍🍳 Estamos preparando tu pedido.",
+  Listo: "🍽️ ¡Tu pedido está listo! Ya te lo llevan a la mesa.",
+  Entregado: "😋 Pedido entregado. ¡Buen provecho!",
+  Rechazado: "El mesero no pudo aceptar tu pedido. Llámalo para ayudarte."
+};
+
+const pantallaBeeper = {
+  Solicitado: { icono: "🕐", titulo: "Pedido enviado", detalle: "El mesero lo está revisando. Ya puedes alejarte: cuando la cocina termine, te vibra el celular." },
+  Pendiente: { icono: "✅", titulo: "Pedido aprobado", detalle: "Ya está en la fila de la cocina. Puedes guardar el celular, te avisamos." },
+  Preparando: { icono: "👨‍🍳", titulo: "Estamos cocinando", detalle: "Tu comida se está preparando. Falta poquito." },
+  Listo: { icono: "🍽️", titulo: "¡Tu pedido está listo!", detalle: "Acércate a recogerlo o espera al mesero en tu mesa." },
+  Entregado: { icono: "😋", titulo: "¡Buen provecho!", detalle: "Tu pedido ya fue entregado." },
+  Rechazado: { icono: "⚠️", titulo: "Pedido no aceptado", detalle: "El mesero no pudo aceptar tu pedido. Llámalo y con gusto te ayuda." }
+};
+
+const ordenPasos = ["Solicitado", "Pendiente", "Preparando", "Listo", "Entregado"];
+
+function mostrarEstado(valor) {
+  const id = estado.pedidoActivo;
+  if (!id) return;
+
+  const caja = $("estadoPedido");
+  caja.textContent = `📟 Pedido #${id} · ${textosEstado[valor] || valor}`;
+  caja.className = "estado visible" + (valor === "Rechazado" ? " rechazado" : "");
+
+  const vista = pantallaBeeper[valor] || pantallaBeeper.Solicitado;
+  $("beeperIcono").textContent = vista.icono;
+  $("beeperTitulo").textContent = vista.titulo;
+  $("beeperDetalle").textContent = vista.detalle;
+  $("beeperNumero").textContent = `PEDIDO #${String(id).padStart(3, "0")}`;
+  $("beeperMesa").textContent = estado.mesa ? `Mesa ${String(estado.mesa).padStart(2, "0")}` : "";
+
+  const avance = ordenPasos.indexOf(valor);
+  document.querySelectorAll(".paso").forEach(p => {
+    p.classList.toggle("hecho", avance >= 0 && ordenPasos.indexOf(p.dataset.paso) <= avance);
+  });
+  $("beeper").classList.toggle("rechazado", valor === "Rechazado");
+
+  const previo = estado.ultimoEstado;
+  estado.ultimoEstado = valor;
+
+  if (valor === "Listo" && !leerSesion(`kdsRecogido${id}`)) {
+    sonarAlarma();
+  } else if (previo && previo !== valor && (valor === "Pendiente" || valor === "Rechazado")) {
+    vibrar([200, 100, 200]);
+  }
+
+  if (valor === "Entregado" || valor === "Rechazado") {
+    detenerAlarma();
+    guardarSesion("kdsPedido", null);
+    estado.pedidoActivo = 0;
+    soltarPantalla();
+  }
+}
+
+async function revisarEstado() {
+  if (!estado.pedidoActivo) return;
+  try {
+    const r = await pedirJson(`/api/estado?id=${estado.pedidoActivo}`);
+    mostrarEstado(r.estado);
+  } catch (e) {}
+}
+
+function abrirBeeper() {
+  cerrarTodo();
+  $("beeper").classList.add("abierto");
+  actualizarBotonesBeeper();
+}
+
+function cerrarBeeper() {
+  $("beeper").classList.remove("abierto");
+}
+
+function vibrar(patron) {
+  try { if (navigator.vibrate) navigator.vibrate(patron); } catch (e) {}
+}
+
+function prepararSonido() {
+  try {
+    if (!estado.audio) estado.audio = new (window.AudioContext || window.webkitAudioContext)();
+    if (estado.audio.state === "suspended") estado.audio.resume();
+  } catch (e) {}
+}
+
+function pitar() {
+  const ctx = estado.audio;
+  if (!ctx) return;
+  try {
+    [0, 0.25, 0.5].forEach(retraso => {
+      const osc = ctx.createOscillator();
+      const vol = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.value = 1760;
+      vol.gain.setValueAtTime(0.0001, ctx.currentTime + retraso);
+      vol.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + retraso + 0.02);
+      vol.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + retraso + 0.18);
+      osc.connect(vol).connect(ctx.destination);
+      osc.start(ctx.currentTime + retraso);
+      osc.stop(ctx.currentTime + retraso + 0.2);
+    });
+  } catch (e) {}
+}
+
+function sonarAlarma() {
+  if (estado.alarma) return;
+  abrirBeeper();
+  $("beeper").classList.add("sonando");
+  $("yaLoRecogi").hidden = false;
+
+  const tituloOriginal = "Menú KDS";
+  let alterna = false;
+  const repicar = () => {
+    vibrar([600, 200, 600, 200, 600]);
+    pitar();
+    alterna = !alterna;
+    document.title = alterna ? "🔔 ¡PEDIDO LISTO!" : tituloOriginal;
+  };
+
+  repicar();
+  estado.alarma = setInterval(repicar, 3000);
+
+  if (document.hidden && estado.registro && window.Notification && Notification.permission === "granted") {
+    estado.registro.showNotification("¡Tu pedido está listo! 🍽️", {
+      body: "Acércate a recogerlo o espera al mesero.",
+      icon: "/icono.svg",
+      tag: `pedido-${estado.pedidoActivo}`,
+      renotify: true,
+      requireInteraction: true,
+      vibrate: [600, 200, 600, 200, 600, 200, 1200]
+    }).catch(() => {});
+  }
+}
+
+function detenerAlarma() {
+  if (estado.alarma) clearInterval(estado.alarma);
+  estado.alarma = null;
+  vibrar(0);
+  document.title = "Menú KDS";
+  $("beeper").classList.remove("sonando");
+  $("yaLoRecogi").hidden = true;
+}
+
+function yaLoRecogi() {
+  if (estado.pedidoActivo) guardarSesion(`kdsRecogido${estado.pedidoActivo}`, 1);
+  detenerAlarma();
+  soltarPantalla();
+  $("beeperDetalle").textContent = "¡Que lo disfrutes! Si quieres algo más, pide desde el menú.";
+}
+
+function base64aBytes(texto) {
+  const relleno = "=".repeat((4 - texto.length % 4) % 4);
+  const crudo = atob((texto + relleno).replace(/-/g, "+").replace(/_/g, "/"));
+  return Uint8Array.from(crudo, c => c.charCodeAt(0));
+}
+
+function pushDisponible() {
+  return window.isSecureContext && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+}
+
+async function registrarServiceWorker() {
+  if (!("serviceWorker" in navigator) || !window.isSecureContext) return;
+  try {
+    estado.registro = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+    navigator.serviceWorker.addEventListener("message", e => {
+      if (!e.data) return;
+      if (e.data.tipo === "abrir-beeper") abrirBeeper();
+      revisarEstado();
+    });
+  } catch (e) {}
+}
+
+async function activarAvisos() {
+  prepararSonido();
+  const boton = $("activarAvisos");
+
+  if (!pushDisponible()) {
+    actualizarBotonesBeeper();
+    avisar("Este navegador no permite avisos, deja la página abierta y te avisamos igual");
+    return;
+  }
+
+  boton.disabled = true;
+  boton.textContent = "Activando…";
+
+  try {
+    const permiso = await Notification.requestPermission();
+    if (permiso !== "granted") throw new Error("Necesitamos tu permiso para avisarte. Puedes activarlo en los ajustes del navegador.");
+
+    const { disponible, clave } = await pedirJson("/api/push/clave");
+    if (!disponible) throw new Error("El restaurante no tiene avisos push ahora, deja la página abierta.");
+
+    const registro = estado.registro || await navigator.serviceWorker.ready;
+    let suscripcion = await registro.pushManager.getSubscription();
+    if (!suscripcion) {
+      suscripcion = await registro.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: base64aBytes(clave) });
+    }
+
+    await pedirJson("/api/push/suscribir", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idPedido: estado.pedidoActivo, ...suscripcion.toJSON() })
+    });
+
+    guardarSesion(`kdsAvisos${estado.pedidoActivo}`, 1);
+    vibrar([150, 80, 150]);
+    avisar("Listo, te avisamos aunque cierres la página");
+  } catch (e) {
+    avisar(e.message);
+  } finally {
+    boton.disabled = false;
+    actualizarBotonesBeeper();
+  }
+}
+
+async function alternarPantalla() {
+  if (estado.quierePantalla) {
+    soltarPantalla();
+  } else {
+    estado.quierePantalla = true;
+    await pedirPantalla();
+    if (!estado.bloqueoPantalla) {
+      estado.quierePantalla = false;
+      avisar("Tu celular no deja mantener la pantalla encendida");
+    }
+  }
+  actualizarBotonesBeeper();
+}
+
+async function pedirPantalla() {
+  try {
+    if (!("wakeLock" in navigator)) return;
+    estado.bloqueoPantalla = await navigator.wakeLock.request("screen");
+    estado.bloqueoPantalla.addEventListener("release", () => { estado.bloqueoPantalla = null; });
+  } catch (e) {
+    estado.bloqueoPantalla = null;
+  }
+}
+
+function soltarPantalla() {
+  estado.quierePantalla = false;
+  const bloqueo = estado.bloqueoPantalla;
+  estado.bloqueoPantalla = null;
+  if (bloqueo) bloqueo.release().catch(() => {});
+  actualizarBotonesBeeper();
+}
+
+function actualizarBotonesBeeper() {
+  const avisos = $("activarAvisos");
+  const activos = leerSesion(`kdsAvisos${estado.pedidoActivo}`) && window.Notification && Notification.permission === "granted";
+  avisos.textContent = activos ? "🔔 Avisos activados" : "🔔 Activar avisos en este celular";
+  avisos.classList.toggle("activo", !!activos);
+  avisos.hidden = !estado.pedidoActivo;
+
+  const pantalla = $("pantallaEncendida");
+  pantalla.hidden = !("wakeLock" in navigator);
+  pantalla.textContent = estado.quierePantalla ? "💡 Pantalla encendida" : "💡 Mantener pantalla encendida";
+  pantalla.classList.toggle("activo", estado.quierePantalla);
+
+  $("probarBeeper").hidden = !("vibrate" in navigator);
+
+  const esIphone = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const instalada = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  let tip = "Puedes bloquear el celular o salir del navegador: te llega una notificación que vibra cuando el pedido esté listo.";
+  if (!pushDisponible()) {
+    tip = esIphone && !instalada
+      ? "En iPhone: toca Compartir → «Agregar a inicio» y abre el menú desde ese ícono para recibir avisos. Mientras tanto deja esta página abierta y suena aquí."
+      : "Tu navegador no permite avisos con la página cerrada. Déjala abierta (puedes bajar el brillo) y te avisa con sonido y vibración.";
+  } else if (esIphone) {
+    tip = "En iPhone la notificación llega con sonido; la vibración depende de los ajustes de notificaciones del celular.";
+  }
+  $("beeperTip").textContent = tip;
+}
+
+function dibujarPlati() {
+  return `<svg viewBox="0 0 120 130" aria-hidden="true">
+    <ellipse cx="60" cy="124" rx="30" ry="5" fill="#000" opacity=".35"/>
+    <g class="cuerpo">
+      <g class="ondas" fill="none" stroke="#39d98a" stroke-width="3" stroke-linecap="round">
+        <path d="M100 48 q8 10 0 20"/><path d="M106 42 q14 16 0 32"/>
+      </g>
+      <path class="brazo-izq" d="M24 78 q-14 4 -12 16" stroke="#c9932a" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path class="brazo-der" d="M96 78 q14 -6 14 -20" stroke="#c9932a" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M60 30 C88 30 100 52 98 80 C96 104 80 118 60 118 C40 118 24 104 22 80 C20 52 32 30 60 30 Z" fill="#f5c842" stroke="#c9932a" stroke-width="3"/>
+      <path d="M36 98 C44 110 76 110 84 98" fill="none" stroke="#e0ad2e" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+      <g fill="#fff" stroke="#ddd" stroke-width="2">
+        <rect x="38" y="26" width="44" height="12" rx="4"/>
+        <circle cx="44" cy="18" r="11"/><circle cx="60" cy="12" r="13"/><circle cx="76" cy="18" r="11"/>
+      </g>
+      <rect x="38" y="30" width="44" height="8" fill="#fff"/>
+      <g class="ojo">
+        <ellipse cx="46" cy="64" rx="9" ry="10" fill="#fff"/>
+        <circle class="pupila" cx="46" cy="65" r="5" fill="#2b1d0e"/>
+        <rect class="parpado" x="36" y="53" width="20" height="22" rx="10" fill="#f5c842"/>
+      </g>
+      <g class="ojo">
+        <ellipse cx="74" cy="64" rx="9" ry="10" fill="#fff"/>
+        <circle class="pupila" cx="74" cy="65" r="5" fill="#2b1d0e"/>
+        <rect class="parpado" x="64" y="53" width="20" height="22" rx="10" fill="#f5c842"/>
+      </g>
+      <circle cx="36" cy="82" r="5" fill="#ff8a7a" opacity=".6"/>
+      <circle cx="84" cy="82" r="5" fill="#ff8a7a" opacity=".6"/>
+      <path class="boca-cerrada" d="M50 84 q10 9 20 0" fill="none" stroke="#2b1d0e" stroke-width="3" stroke-linecap="round"/>
+      <g class="boca-abierta"><ellipse cx="60" cy="88" rx="9" ry="7" fill="#2b1d0e"/><ellipse cx="60" cy="92" rx="5" ry="3" fill="#ff6f6f"/></g>
+      <circle class="boca-o" cx="60" cy="88" r="4.5" fill="#2b1d0e"/>
+      <g class="puntos" fill="#f5a623"><circle cx="88" cy="34" r="3.5"/><circle cx="98" cy="28" r="3.5"/><circle cx="108" cy="22" r="3.5"/></g>
+    </g>
+  </svg>`;
+}
+
+const plati = { temporizador: null, vozActiva: true, reconocimiento: null, grabando: false, voz: null };
+
+function ponerPlati(animo, duracion) {
+  document.body.dataset.plati = animo;
+  clearTimeout(plati.temporizador);
+  if (duracion) plati.temporizador = setTimeout(() => { if (document.body.dataset.plati === animo) document.body.dataset.plati = "reposo"; }, duracion);
+}
+
+function decirEnGlobo(texto) {
+  $("platiGlobo").textContent = texto;
+}
+
+function seguirConLosOjos(x, y) {
+  document.querySelectorAll(".plati svg").forEach(svg => {
+    const caja = svg.getBoundingClientRect();
+    if (!caja.width) return;
+    const cx = caja.left + caja.width / 2, cy = caja.top + caja.height * 0.5;
+    const angulo = Math.atan2(y - cy, x - cx);
+    const distancia = Math.min(3, Math.hypot(x - cx, y - cy) / 40);
+    svg.querySelectorAll(".pupila").forEach(p => {
+      p.style.transform = `translate(${(Math.cos(angulo) * distancia).toFixed(1)}px, ${(Math.sin(angulo) * distancia).toFixed(1)}px)`;
+    });
+  });
+}
+
+function textoParaHablar(texto) {
+  return texto.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, "").replace(/\$\s?(\d{1,3}(?:\.\d{3})*)/g, "$1 pesos").replace(/pa'/g, "pa");
+}
+
+function elegirVoz() {
+  if (!("speechSynthesis" in window)) return null;
+  const voces = speechSynthesis.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("es"));
+  const orden = ["es-co", "es-mx", "es-us", "es-419", "es-es"];
+  voces.sort((a, b) => {
+    const ia = orden.indexOf(a.lang.toLowerCase()), ib = orden.indexOf(b.lang.toLowerCase());
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+  });
+  return voces[0] || null;
+}
+
+function hablar(texto) {
+  if (!plati.vozActiva || !("speechSynthesis" in window)) {
+    ponerPlati("feliz", 1200);
+    return;
+  }
+  speechSynthesis.cancel();
+  const frase = new SpeechSynthesisUtterance(textoParaHablar(texto));
+  plati.voz = plati.voz || elegirVoz();
+  if (plati.voz) frase.voice = plati.voz;
+  frase.lang = plati.voz ? plati.voz.lang : "es-CO";
+  frase.rate = 1.05;
+  frase.pitch = 1.25;
+  frase.onstart = () => ponerPlati("hablando");
+  frase.onend = () => ponerPlati("reposo");
+  frase.onerror = () => ponerPlati("reposo");
+  speechSynthesis.speak(frase);
+}
+
+function saludarPlati() {
+  const frases = [
+    "¡Quiubo! Soy Plati. ¿Qué se te antoja hoy?",
+    "Dime cuánta plata tienes y te armo el combo.",
+    "¡Hey! Si tienes sed, pregúntame por las bebidas.",
+    "Mándame un audio con el micrófono, yo te entiendo.",
+    "¡Me haces cosquillas! ¿Pedimos algo rico?"
+  ];
+  const frase = frases[Math.floor(Math.random() * frases.length)];
+  decirEnGlobo(frase);
+  ponerPlati("saludando", 1600);
+  vibrar(40);
+  if (plati.vozActiva && "speechSynthesis" in window) setTimeout(() => hablar(frase), 150);
+}
+
+function alternarVoz() {
+  plati.vozActiva = !plati.vozActiva;
+  if (!plati.vozActiva && "speechSynthesis" in window) speechSynthesis.cancel();
+  $("vozBot").textContent = plati.vozActiva ? "🔊 Voz activada" : "🔇 Voz apagada";
+  try { localStorage.setItem("kdsVozPlati", plati.vozActiva ? "1" : "0"); } catch (e) {}
+}
+
+function claseReconocimiento() {
+  return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+}
+
+function alternarMicrofono() {
+  if (plati.grabando) {
+    plati.reconocimiento && plati.reconocimiento.stop();
+    return;
+  }
+
+  const Reconocimiento = claseReconocimiento();
+  if (!Reconocimiento) {
+    decirEnGlobo("Este navegador no me deja oír audios. Toca el micrófono del teclado del celular para dictar y luego Enviar.");
+    ponerPlati("pensando", 2500);
+    $("preguntaBot").focus();
+    return;
+  }
+
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  const r = new Reconocimiento();
+  r.lang = "es-CO";
+  r.interimResults = true;
+  r.continuous = false;
+  r.maxAlternatives = 1;
+
+  const enVivo = burbuja("cliente", "…");
+  enVivo.classList.add("voz", "escuchando");
+  let texto = "";
+
+  r.onstart = () => {
+    plati.grabando = true;
+    $("microfono").classList.add("grabando");
+    $("microfono").textContent = "■";
+    ponerPlati("escuchando");
+    decirEnGlobo("Te escucho… habla normal, como le hablarías al mesero.");
+    vibrar(30);
+  };
+  r.onresult = e => {
+    texto = Array.from(e.results).map(x => x[0].transcript).join(" ").trim();
+    enVivo.textContent = texto || "…";
+  };
+  r.onerror = e => {
+    const motivos = {
+      "not-allowed": "Necesito permiso para usar el micrófono. Revisa los permisos del navegador.",
+      "service-not-allowed": "Necesito permiso para usar el micrófono. Revisa los permisos del navegador.",
+      "no-speech": "No alcancé a oír nada. Toca el 🎤 e inténtalo otra vez.",
+      "network": "Para entender audios necesito internet en el celular.",
+      "audio-capture": "No encontré el micrófono del celular."
+    };
+    decirEnGlobo(motivos[e.error] || "No te entendí bien, ¿me lo repites?");
+  };
+  r.onend = () => {
+    plati.grabando = false;
+    plati.reconocimiento = null;
+    $("microfono").classList.remove("grabando");
+    $("microfono").textContent = "🎤";
+    enVivo.remove();
+    if (texto) {
+      preguntar(texto, true);
+    } else {
+      ponerPlati("reposo");
+    }
+  };
+
+  plati.reconocimiento = r;
+  try {
+    r.start();
+  } catch (e) {
+    enVivo.remove();
+    decirEnGlobo("No pude abrir el micrófono. Inténtalo otra vez.");
+  }
+}
+
+function prepararPlati() {
+  $("platiGrande").innerHTML = dibujarPlati();
+  $("platiFlotante").insertAdjacentHTML("afterbegin", dibujarPlati());
+  document.body.dataset.plati = "reposo";
+
+  try { plati.vozActiva = localStorage.getItem("kdsVozPlati") !== "0"; } catch (e) {}
+  $("vozBot").textContent = plati.vozActiva ? "🔊 Voz activada" : "🔇 Voz apagada";
+  if (!("speechSynthesis" in window)) $("vozBot").style.display = "none";
+  else speechSynthesis.onvoiceschanged = () => { plati.voz = elegirVoz(); };
+
+  $("platiGrande").onclick = saludarPlati;
+  $("platiFlotante").onclick = () => { abrir("hojaBot"); setTimeout(saludarPlati, 250); };
+  $("vozBot").onclick = alternarVoz;
+  $("microfono").onclick = alternarMicrofono;
+
+  window.addEventListener("pointermove", e => seguirConLosOjos(e.clientX, e.clientY), { passive: true });
+  window.addEventListener("pointerdown", e => seguirConLosOjos(e.clientX, e.clientY), { passive: true });
+
+  setTimeout(() => $("platiBurbujita").classList.add("visible"), 1500);
+  setTimeout(() => $("platiBurbujita").classList.remove("visible"), 6000);
+  setInterval(() => {
+    if (document.hidden || $("hojaBot").classList.contains("abierta")) return;
+    if (document.body.dataset.plati !== "reposo") return;
+    ponerPlati("saludando", 1400);
+  }, 20000);
+}
+
+function burbuja(rol, texto, sugeridos) {
+  const b = elemento("div", "burbuja " + rol, texto);
+  if (sugeridos && sugeridos.length) {
+    const cont = elemento("div", "sugeridos");
+    sugeridos.forEach(s => {
+      const btn = elemento("button", "", `+ ${s.nombre} · ${pesos.format(s.precio)}`);
+      btn.type = "button";
+      btn.onclick = () => agregar(s.id, estado.notaBot);
+      cont.appendChild(btn);
+    });
+    b.appendChild(cont);
+  }
+  $("chat").appendChild(b);
+  $("chat").scrollTop = $("chat").scrollHeight;
+  return b;
+}
+
+async function preguntar(texto, porVoz) {
+  texto = texto.trim();
+  if (!texto) return;
+  const mia = burbuja("cliente", texto);
+  if (porVoz) mia.classList.add("voz");
+  const espera = burbuja("bot", "Pensando…");
+  ponerPlati("pensando");
+  decirEnGlobo("Déjame ver la carta…");
+  const historial = estado.historial.slice(-10);
+  estado.historial.push({ rol: "cliente", texto });
+
+  try {
+    const r = await pedirJson("/api/bot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mensaje: texto, mesa: estado.mesa, historial })
+    });
+    espera.remove();
+    if (r.nota) estado.notaBot = r.nota;
+    burbuja("bot", r.respuesta, r.sugeridos);
+    estado.historial.push({ rol: "bot", texto: r.respuesta });
+    decirEnGlobo(r.sugeridos && r.sugeridos.length ? "Toca un botón naranja y te lo agrego." : "¿Algo más?");
+    hablar(r.respuesta);
+  } catch (e) {
+    espera.textContent = e.message;
+    ponerPlati("reposo");
+    decirEnGlobo("Uy, se me cayó la conexión. ¿Me repites?");
+  }
+}
+
+function abrir(id) {
+  cerrarTodo();
+  $("capa").classList.add("abierta");
+  $(id).classList.add("abierta");
+  $("platiFlotante").classList.add("escondido");
+  if (id === "hojaBot") setTimeout(() => $("preguntaBot").focus(), 50);
+}
+
+function cerrarTodo() {
+  if (plati.grabando && plati.reconocimiento) plati.reconocimiento.stop();
+  $("platiFlotante").classList.remove("escondido");
+  $("capa").classList.remove("abierta");
+  document.querySelectorAll(".hoja").forEach(h => h.classList.remove("abierta"));
+}
+
+function iniciar() {
+  for (let i = 1; i <= 15; i++) {
+    const b = elemento("button", "", String(i));
+    b.type = "button";
+    b.onclick = () => {
+      estado.mesa = i;
+      try { localStorage.setItem("kdsMesa", i); } catch (e) {}
+      pintarMesa();
+      cerrarTodo();
+    };
+    $("elegirMesa").appendChild(b);
+  }
+
+  $("chipMesa").onclick = () => abrir("hojaMesa");
+  $("estadoPedido").onclick = abrirBeeper;
+  $("cerrarBeeper").onclick = cerrarBeeper;
+  $("yaLoRecogi").onclick = yaLoRecogi;
+  $("activarAvisos").onclick = activarAvisos;
+  $("pantallaEncendida").onclick = alternarPantalla;
+  $("probarBeeper").onclick = () => { prepararSonido(); vibrar([600, 200, 600]); pitar(); };
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      revisarEstado();
+      if (estado.quierePantalla && !estado.bloqueoPantalla) pedirPantalla();
+    }
+  });
+  $("abrirCarrito").onclick = () => abrir("hojaCarrito");
+  $("abrirBot").onclick = () => abrir("hojaBot");
+  $("capa").onclick = cerrarTodo;
+  document.querySelectorAll("[data-cerrar]").forEach(b => b.onclick = cerrarTodo);
+  $("enviarPedido").onclick = enviarPedido;
+  document.querySelectorAll(".atajos button").forEach(b => b.onclick = () => preguntar(b.textContent));
+  $("formBot").onsubmit = e => {
+    e.preventDefault();
+    const campo = $("preguntaBot");
+    preguntar(campo.value);
+    campo.value = "";
+  };
+
+  prepararPlati();
+  burbuja("bot", "¡Hola! Soy Plati, el asistente del restaurante. Escríbeme o mándame un audio con tu presupuesto o lo que se te antoja y te ayudo a escoger.");
+  pintarMesa();
+  actualizarCarrito();
+  cargarMenu();
+  if (!estado.mesa) abrir("hojaMesa");
+  if (estado.pedidoActivo) { abrirBeeper(); revisarEstado(); }
+  setInterval(revisarEstado, 4000);
+  registrarServiceWorker();
+  setInterval(cargarMenuSilencioso, 30000);
+}
+
+async function cargarMenuSilencioso() {
+  try {
+    estado.menu = await pedirJson("/api/menu");
+    for (const id of estado.carrito.keys()) {
+      if (!estado.menu.some(p => p.id === id)) estado.carrito.delete(id);
+    }
+    pintarTabs();
+    actualizarCarrito();
+  } catch (e) {}
+}
+
+iniciar();
+</script>
+</body>
+</html>

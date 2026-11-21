@@ -41,6 +41,10 @@ public sealed class PedidoCocina : INotifyPropertyChanged
     public string DetalleEntrega =>
         $"{Mesero} · {Productos.Sum(p => p.Cantidad)} productos · {TotalTexto}";
 
+    public string ProductosTexto =>
+        string.Join("\n", Productos.Select(p =>
+            p.TieneNotas ? $"{p.Cantidad} × {p.Nombre} ({p.Notas})" : $"{p.Cantidad} × {p.Nombre}"));
+
     public int MinutosEspera =>
         Math.Max(0, (int)(DateTime.Now - Fecha).TotalMinutes);
 
@@ -93,12 +97,13 @@ public sealed class PedidoCocina : INotifyPropertyChanged
         string mesa,
         string mesero,
         IEnumerable<LineaComanda> productos,
-        string observaciones)
+        string observaciones,
+        DateTime? fecha = null)
     {
         Numero = numero;
         Mesa = mesa;
         Mesero = mesero;
-        Fecha = DateTime.Now;
+        Fecha = fecha ?? DateTime.Now;
         Observaciones = observaciones.Trim();
 
         Productos = productos
@@ -151,104 +156,5 @@ public sealed class PedidoCocina : INotifyPropertyChanged
         PropertyChanged?.Invoke(
             this,
             new PropertyChangedEventArgs(nombre));
-    }
-}
-
-public static class PedidosEnMemoria
-{
-    private static readonly List<PedidoCocina> pedidos = new();
-    private static int siguienteNumero = 1;
-
-    public static int ProximoNumero => siguienteNumero;
-
-    public static IReadOnlyList<PedidoCocina> Activos =>
-        pedidos
-            .Where(p => p.Estado != EstadoPedido.Entregado)
-            .ToList()
-            .AsReadOnly();
-
-    public static IReadOnlyList<PedidoCocina> EnCocina =>
-        pedidos
-            .Where(p => p.Estado is
-                EstadoPedido.Pendiente or EstadoPedido.EnPreparacion)
-            .ToList()
-            .AsReadOnly();
-
-    public static IReadOnlyList<PedidoCocina> Listos =>
-        pedidos
-            .Where(p => p.Estado == EstadoPedido.Listo)
-            .ToList()
-            .AsReadOnly();
-
-    public static event EventHandler? Cambio;
-
-    public static PedidoCocina Enviar(
-        IEnumerable<LineaComanda> productos,
-        string mesa,
-        string observaciones,
-        string mesero = "Carlos Mesero")
-    {
-        var detalle = productos.ToList();
-
-        if (detalle.Count == 0 ||
-            detalle.Any(p => p.Cantidad <= 0 || p.PrecioUnitario < 0))
-        {
-            throw new InvalidOperationException(
-                "El pedido debe contener productos con cantidades y precios válidos.");
-        }
-
-        if (string.IsNullOrWhiteSpace(mesa) ||
-            string.IsNullOrWhiteSpace(mesero))
-        {
-            throw new InvalidOperationException(
-                "Selecciona la mesa y el mesero.");
-        }
-
-        var pedido = new PedidoCocina(
-            siguienteNumero++,
-            mesa,
-            mesero,
-            detalle,
-            observaciones ?? string.Empty);
-
-        pedidos.Add(pedido);
-
-        Cambio?.Invoke(null, EventArgs.Empty);
-
-        return pedido;
-    }
-
-    public static void Avanzar(PedidoCocina pedido)
-    {
-        if (!pedidos.Contains(pedido))
-            return;
-
-        if (pedido.Estado == EstadoPedido.Pendiente)
-        {
-            pedido.CambiarEstado(EstadoPedido.EnPreparacion);
-        }
-        else if (pedido.Estado == EstadoPedido.EnPreparacion)
-        {
-            pedido.CambiarEstado(EstadoPedido.Listo);
-        }
-        else
-        {
-            return;
-        }
-
-        Cambio?.Invoke(null, EventArgs.Empty);
-    }
-
-    public static void Entregar(PedidoCocina pedido)
-    {
-        if (!pedidos.Contains(pedido) ||
-            pedido.Estado != EstadoPedido.Listo)
-        {
-            return;
-        }
-
-        pedido.CambiarEstado(EstadoPedido.Entregado);
-
-        Cambio?.Invoke(null, EventArgs.Empty);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,6 +9,7 @@ namespace KDS.PRE.Vistas;
 
 public partial class VistaCocina : UserControl
 {
+    private readonly KdsPedidoBLL pedidoBll = new();
     private readonly DispatcherTimer actualizador = new()
     {
         Interval = TimeSpan.FromSeconds(3)
@@ -17,68 +19,90 @@ public partial class VistaCocina : UserControl
     {
         InitializeComponent();
 
-        actualizador.Tick += (_, _) => ActualizarTiempos();
+        actualizador.Tick += (_, _) => ActualizarPantallaDesdeBD();
 
         Loaded += Vista_Loaded;
         Unloaded += Vista_Unloaded;
 
-        ActualizarPantalla();
+        ActualizarPantallaDesdeBD();
     }
 
     private void Vista_Loaded(object sender, RoutedEventArgs e)
     {
-        PedidosEnMemoria.Cambio -= Pedidos_Cambio;
-        PedidosEnMemoria.Cambio += Pedidos_Cambio;
-
-        ActualizarPantalla();
+        ActualizarPantallaDesdeBD();
         actualizador.Start();
     }
 
     private void Vista_Unloaded(object sender, RoutedEventArgs e)
     {
         actualizador.Stop();
-        PedidosEnMemoria.Cambio -= Pedidos_Cambio;
     }
 
-    private void Pedidos_Cambio(object? sender, EventArgs e)
+    private void ActualizarPantallaDesdeBD()
     {
-        ActualizarPantalla();
-    }
+        try
+        {
+            List<PedidoModel> pedidosBD = pedidoBll.ProcesarColaCocina();
 
-    private void ActualizarTiempos()
-    {
-        foreach (var pedido in PedidosEnMemoria.EnCocina)
-            pedido.ActualizarTiempo();
-    }
+            var pedidosVisuales = new List<PedidoCocina>();
 
-    private void ActualizarPantalla()
-    {
-        var pedidos = PedidosEnMemoria.EnCocina.ToList();
+            foreach (var p in pedidosBD)
+            {
+                var lineas = p.Detalles.Select(d => new LineaComanda(
+                    d.IdPlato.ToString(),
+                    d.NombrePlato,
+                    d.PrecioUnitario,
+                    d.Cantidad,
+                    d.NotasEspeciales)).ToList();
 
-        ListaPedidos.ItemsSource = pedidos;
+                var estadoVisual = p.Estado == "Preparando"
+                    ? EstadoPedido.EnPreparacion
+                    : EstadoPedido.Pendiente;
 
-        TextoPendientes.Text = "● PENDIENTES: " +
-            pedidos.Count(p => p.Estado == EstadoPedido.Pendiente);
+                var pedCocina = new PedidoCocina(
+                    p.IdPedido,
+                    $"Mesa {p.NumeroMesa:00}",
+                    "Mesero",
+                    lineas,
+                    "",
+                    p.FechaHora);
 
-        TextoPreparacion.Text = "● EN PREPARACIÓN: " +
-            pedidos.Count(p => p.Estado == EstadoPedido.EnPreparacion);
+                pedCocina.CambiarEstado(estadoVisual);
+                pedidosVisuales.Add(pedCocina);
+            }
 
-        TextoListos.Text =
-            "● LISTOS EN MESERO: " + PedidosEnMemoria.Listos.Count;
+            ListaPedidos.ItemsSource = pedidosVisuales;
 
-        TextoTotalPedidos.Text = pedidos.Count == 1
-            ? "1 PEDIDO"
-            : pedidos.Count + " PEDIDOS";
+            TextoPendientes.Text = "● PENDIENTES: " +
+                pedidosVisuales.Count(p => p.Estado == EstadoPedido.Pendiente);
 
-        MensajeSinPedidos.Visibility = pedidos.Count == 0
-            ? Visibility.Visible
-            : Visibility.Collapsed;
+            TextoPreparacion.Text = "● EN PREPARACIÓN: " +
+                pedidosVisuales.Count(p => p.Estado == EstadoPedido.EnPreparacion);
 
-        ScrollPedidos.Visibility = pedidos.Count == 0
-            ? Visibility.Collapsed
-            : Visibility.Visible;
+            var listosBD = pedidoBll.ObtenerPedidosListosParaMesero();
+            TextoListos.Text = "● LISTOS: " + listosBD.Count;
 
-        ActualizarTiempos();
+            TextoTotalPedidos.Text = pedidosVisuales.Count == 1
+                ? "1 PEDIDO"
+                : pedidosVisuales.Count + " PEDIDOS";
+
+            MensajeSinPedidos.Visibility = pedidosVisuales.Count == 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            ScrollPedidos.Visibility = pedidosVisuales.Count == 0
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            foreach (var p in pedidosVisuales)
+            {
+                p.ActualizarTiempo();
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error actualizando cocina: {ex.Message}");
+        }
     }
 
     private void BtnAvanzarEstado_Click(
@@ -86,7 +110,21 @@ public partial class VistaCocina : UserControl
         RoutedEventArgs e)
     {
         if (sender is Button { Tag: PedidoCocina pedido })
-            PedidosEnMemoria.Avanzar(pedido);
+        {
+            try
+            {
+                string nuevoEstado = pedido.Estado == EstadoPedido.Pendiente
+                    ? "Preparando"
+                    : "Listo";
+
+                pedidoBll.ActualizarEstado(pedido.Numero, nuevoEstado);
+                ActualizarPantallaDesdeBD();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error al avanzar estado: {ex.Message}");
+            }
+        }
     }
 
     private void BtnVerTicket_Click(

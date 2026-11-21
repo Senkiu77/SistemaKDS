@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -12,6 +12,17 @@
     <Resource Include="Assets\logo-kdss.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <EmbeddedResource Include="Portal\menu.html" LogicalName="KDS.PRE.Portal.menu.html" />
+    <EmbeddedResource Include="Portal\sw.js" LogicalName="KDS.PRE.Portal.sw.js" />
+    <EmbeddedResource Include="Portal\manifest.json" LogicalName="KDS.PRE.Portal.manifest.json" />
+    <EmbeddedResource Include="Portal\icono.svg" LogicalName="KDS.PRE.Portal.icono.svg" />
+    <EmbeddedResource Include="..\BD\actualizacion_menu_web.sql" LogicalName="KDS.PRE.BD.actualizacion.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Anthropic" Version="13.12.0" />
+    <PackageReference Include="System.Speech" Version="9.0.*" />
+    <PackageReference Include="Npgsql" Version="9.0.*" />
   </ItemGroup>
 
 </Project>

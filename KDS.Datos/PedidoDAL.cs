@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Npgsql;
 using KDS.Entidades;
 
@@ -10,6 +7,8 @@ namespace KDS.Datos
 {
     public class PedidoDAL
     {
+        private const string ColumnasPedido = "id_pedido, numero_mesa, fecha_hora, estado, notificado_voz";
+
         public bool InsertarPedido(Pedido nuevoPedido)
         {
             using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
@@ -19,8 +18,8 @@ namespace KDS.Datos
                 {
                     try
                     {
-                        string sqlPedido = @"INSERT INTO pedidos (numero_mesa, fecha_hora, estado, notificado_voz) 
-                                             VALUES (@mesa, @fecha, 'Pendiente', false) 
+                        string sqlPedido = @"INSERT INTO pedidos (numero_mesa, fecha_hora, estado, notificado_voz)
+                                             VALUES (@mesa, @fecha, @estado, FALSE)
                                              RETURNING id_pedido;";
 
                         int idGenerado;
@@ -28,10 +27,11 @@ namespace KDS.Datos
                         {
                             cmdPedido.Parameters.AddWithValue("@mesa", nuevoPedido.NumeroMesa);
                             cmdPedido.Parameters.AddWithValue("@fecha", DateTime.Now);
+                            cmdPedido.Parameters.AddWithValue("@estado", string.IsNullOrEmpty(nuevoPedido.Estado) ? "Pendiente" : nuevoPedido.Estado);
                             idGenerado = Convert.ToInt32(cmdPedido.ExecuteScalar());
                         }
 
-                        string sqlDetalle = @"INSERT INTO detalle_pedidos (id_pedido, id_plato, cantidad, notas_especiales) 
+                        string sqlDetalle = @"INSERT INTO detalle_pedidos (id_pedido, id_plato, cantidad, notas_especiales)
                                               VALUES (@idPedido, @idPlato, @cantidad, @notas);";
 
                         foreach (DetallePedido det in nuevoPedido.Detalles)
@@ -47,6 +47,7 @@ namespace KDS.Datos
                         }
 
                         trans.Commit();
+                        nuevoPedido.IdPedido = idGenerado;
                         return true;
                     }
                     catch (Exception)
@@ -60,34 +61,115 @@ namespace KDS.Datos
 
         public List<Pedido> ObtenerPedidosCocina()
         {
+            return ConsultarPedidos("WHERE estado IN ('Pendiente', 'Preparando')");
+        }
+
+        public List<Pedido> ObtenerPedidosListosParaMesero()
+        {
+            return ConsultarPedidos("WHERE estado = 'Listo'");
+        }
+
+        public List<Pedido> ObtenerSolicitudesClientes()
+        {
+            return ConsultarPedidos("WHERE estado = 'Solicitado'");
+        }
+
+        public string ObtenerEstadoPedido(int idPedido)
+        {
+            string sql = "SELECT estado FROM pedidos WHERE id_pedido = @id;";
+            using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
+            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, con))
+            {
+                cmd.Parameters.AddWithValue("@id", idPedido);
+                con.Open();
+                object estado = cmd.ExecuteScalar();
+                return estado == null || estado == DBNull.Value ? null : estado.ToString();
+            }
+        }
+
+        public bool MarcarComoNotificado(int idPedido)
+        {
+            string sql = "UPDATE pedidos SET notificado_voz = true WHERE id_pedido = @id;";
+            using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
+            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, con))
+            {
+                cmd.Parameters.AddWithValue("@id", idPedido);
+                con.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public bool CambiarEstadoPedido(int idPedido, string nuevoEstado)
+        {
+            string sql = "UPDATE pedidos SET estado = @estado WHERE id_pedido = @id;";
+            using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
+            using (NpgsqlCommand cmd = new NpgsqlCommand(sql, con))
+            {
+                cmd.Parameters.AddWithValue("@estado", nuevoEstado);
+                cmd.Parameters.AddWithValue("@id", idPedido);
+                con.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public bool EliminarPedido(int idPedido)
+        {
+            using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
+            {
+                con.Open();
+                using (NpgsqlTransaction trans = con.BeginTransaction())
+                {
+                    try
+                    {
+                        using (NpgsqlCommand cmdDet = new NpgsqlCommand("DELETE FROM detalle_pedidos WHERE id_pedido = @id;", con, trans))
+                        {
+                            cmdDet.Parameters.AddWithValue("@id", idPedido);
+                            cmdDet.ExecuteNonQuery();
+                        }
+
+                        int borrados;
+                        using (NpgsqlCommand cmd = new NpgsqlCommand("DELETE FROM pedidos WHERE id_pedido = @id;", con, trans))
+                        {
+                            cmd.Parameters.AddWithValue("@id", idPedido);
+                            borrados = cmd.ExecuteNonQuery();
+                        }
+
+                        trans.Commit();
+                        return borrados > 0;
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        private List<Pedido> ConsultarPedidos(string filtro)
+        {
             List<Pedido> pedidos = new List<Pedido>();
-            string sqlPedidos = @"SELECT id_pedido, numero_mesa, fecha_hora, estado, notificado_voz 
-                                  FROM pedidos 
-                                  WHERE estado IN ('Pendiente', 'Preparando') 
-                                  ORDER BY fecha_hora ASC;";
+            string sql = "SELECT " + ColumnasPedido + " FROM pedidos " + filtro + " ORDER BY fecha_hora ASC;";
 
             using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
             {
                 con.Open();
-                using (NpgsqlCommand cmd = new NpgsqlCommand(sqlPedidos, con))
+                using (NpgsqlCommand cmd = new NpgsqlCommand(sql, con))
+                using (NpgsqlDataReader dr = cmd.ExecuteReader())
                 {
-                    using (NpgsqlDataReader dr = cmd.ExecuteReader())
+                    while (dr.Read())
                     {
-                        while (dr.Read())
+                        pedidos.Add(new Pedido
                         {
-                            pedidos.Add(new Pedido
-                            {
-                                IdPedido = Convert.ToInt32(dr["id_pedido"]),
-                                NumeroMesa = Convert.ToInt32(dr["numero_mesa"]),
-                                FechaHora = Convert.ToDateTime(dr["fecha_hora"]),
-                                Estado = dr["estado"].ToString(),
-                                NotificadoVoz = Convert.ToBoolean(dr["notificado_voz"])
-                            });
-                        }
+                            IdPedido = Convert.ToInt32(dr["id_pedido"]),
+                            NumeroMesa = Convert.ToInt32(dr["numero_mesa"]),
+                            FechaHora = Convert.ToDateTime(dr["fecha_hora"]),
+                            Estado = dr["estado"].ToString(),
+                            NotificadoVoz = Convert.ToBoolean(dr["notificado_voz"])
+                        });
                     }
                 }
 
-                
                 foreach (Pedido p in pedidos)
                 {
                     p.Detalles = ObtenerDetallesPorPedido(p.IdPedido, con);
@@ -125,72 +207,5 @@ namespace KDS.Datos
             }
             return detalles;
         }
-
-        public bool MarcarComoNotificado(int idPedido)
-        {
-            string sql = "UPDATE pedidos SET notificado_voz = true WHERE id_pedido = @id;";
-            using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
-            {
-                using (NpgsqlCommand cmd = new NpgsqlCommand(sql, con))
-                {
-                    cmd.Parameters.AddWithValue("@id", idPedido);
-                    con.Open();
-                    return cmd.ExecuteNonQuery() > 0;
-                }
-            }
-        }
-
-        public bool CambiarEstadoPedido(int idPedido, string nuevoEstado)
-        {
-            string sql = "UPDATE pedidos SET estado = @estado WHERE id_pedido = @id;";
-            using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
-            {
-                using (NpgsqlCommand cmd = new NpgsqlCommand(sql, con))
-                {
-                    cmd.Parameters.AddWithValue("@estado", nuevoEstado);
-                    cmd.Parameters.AddWithValue("@id", idPedido);
-                    con.Open();
-                    return cmd.ExecuteNonQuery() > 0;
-                }
-            }
-        }
-
-        public List<Pedido> ObtenerPedidosListosParaMesero()
-        {
-            List<Pedido> pedidos = new List<Pedido>();
-            string sql = @"SELECT id_pedido, numero_mesa, fecha_hora, estado, notificado_voz 
-                           FROM pedidos 
-                           WHERE estado = 'Listo' 
-                           ORDER BY fecha_hora ASC;";
-
-            using (NpgsqlConnection con = ConexionBD.ObtenerConexion())
-            {
-                con.Open();
-                using (NpgsqlCommand cmd = new NpgsqlCommand(sql, con))
-                {
-                    using (NpgsqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        while (dr.Read())
-                        {
-                            pedidos.Add(new Pedido
-                            {
-                                IdPedido = Convert.ToInt32(dr["id_pedido"]),
-                                NumeroMesa = Convert.ToInt32(dr["numero_mesa"]),
-                                FechaHora = Convert.ToDateTime(dr["fecha_hora"]),
-                                Estado = dr["estado"].ToString(),
-                                NotificadoVoz = Convert.ToBoolean(dr["notificado_voz"])
-                            });
-                        }
-                    }
-                }
-
-                foreach (Pedido p in pedidos)
-                {
-                    p.Detalles = ObtenerDetallesPorPedido(p.IdPedido, con);
-                }
-            }
-            return pedidos;
-        }
-
     }
 }
